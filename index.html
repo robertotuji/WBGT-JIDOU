@@ -56,7 +56,6 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          // Ajusta o caminho do Service Worker para o repositório
           navigator.serviceWorker.register('/WBGT-JIDOU/service-worker.js').then(function(registration) {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           }, function(err) {
