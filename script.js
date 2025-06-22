@@ -96,7 +96,7 @@ const translations = {
 // ** SUA CHAVE DE API DO OPENWEATHERMAP AQUI **
 // CUIDADO: Esta chave ficará visível no código do navegador.
 // Para um projeto real ou de alto uso, o ideal é usar um backend para escondê-la.
-const OPENWEATHER_API_KEY = "SUA_CHAVE_DE_API_OPENWEATHERMAP_AQUI"; // <-- COLOQUE SUA CHAVE AQUI
+const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e"; // <-- COLOQUE SUA CHAVE AQUI
 const OPENWEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
 
 
