@@ -53,22 +53,19 @@ button {
     font-weight: bold;
     cursor: pointer;
     color: white; /* Cor da fonte padrão para botões de fundo colorido */
-    transition: background-color 0.3s ease; /* Transição suave para mudança de cor */
+    transition: background-color 0.3s ease;
 }
 
-/* Estilo padrão para o botão de localização */
 #get-location-weather {
-    background-color: #00aaff; /* Cor azul original */
+    background-color: #00aaff; /* Azul original */
     color: white; /* Texto branco */
 }
 
-/* NOVO: Estilo para o botão de localização quando está ATIVO/USANDO A GEOLOCALIZAÇÃO */
 #get-location-weather.active {
-    background-color: #28a745; /* Um verde, para indicar sucesso/ativo */
+    background-color: #28a745; /* Verde para ativo */
 }
 
-
-#calculate, #fetch-weather {
+#calculate {
     background-color: #00aaff;
 }
 
@@ -118,22 +115,14 @@ input, select {
     color: white !important;
 }
 
-.dark-mode #result-box[style*="background-color: rgb(255, 255, 0)"],
-.dark-mode #result-box[style*="background-color: rgb(255, 192, 0)"]
+.dark-mode #result-box[style*="background-color: rgb(255, 255, 0)"], /* Amarelo */
+.dark-mode #result-box[style*="background-color: rgb(255, 192, 0)"] /* Laranja */
 {
     color: black !important;
 }
 
 
 .switch-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-    gap: 10px;
-}
-
-.switch {
   position: relative;
   display: inline-block;
   width: 40px;
