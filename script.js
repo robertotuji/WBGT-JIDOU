@@ -134,7 +134,7 @@ loadWbgtData();
 function displayError(message) {
     resultBox.classList.add("hidden");
     locationDisplay.textContent = "";
-    getLocationWeatherButton.classList.remove('active');
+    getLocationWeatherButton.classList.remove('active'); // Garante que o botão não fique ativo em caso de erro
     errorMessageBox.classList.remove("hidden");
     errorMessage.innerHTML = message;
 }
@@ -143,22 +143,21 @@ function hideError() {
     errorMessageBox.classList.add("hidden");
     errorMessage.innerHTML = "";
     locationDisplay.textContent = "";
-    getLocationWeatherButton.classList.remove('active');
+    getLocationWeatherButton.classList.remove('active'); // Garante que o botão não fique ativo ao esconder erro
 }
 
 async function getGeolocationAndFetchWeather() {
-    hideError();
+    hideError(); // Limpa erros e resultados anteriores
     resultBox.classList.add("hidden");
 
     if (!OPENWEATHER_API_KEY) {
         displayError("Por favor, configure sua chave de API do OpenWeatherMap no script.js.");
         console.error("API Key não configurada ou inválida.");
-        getLocationWeatherButton.classList.remove('active');
         return;
     }
 
-    console.log("Clicado no botão: Tentando obter geolocalização...");
-    getLocationWeatherButton.classList.add('active'); // Mude a cor do botão para ativo
+    console.log("Clicado no botão 'Obter Clima da Localização Atual'. Tentando obter geolocalização...");
+    getLocationWeatherButton.classList.add('active'); // Define o botão como ativo no início da tentativa
     
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -167,6 +166,8 @@ async function getGeolocationAndFetchWeather() {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 await fetchWeatherDataByCoords(lat, lon);
+                // A classe 'active' do botão será mantida se a busca da API for bem-sucedida,
+                // ou removida se houver erro ou calculo manual.
             },
             (error) => {
                 const lang = document.getElementById("language").value;
@@ -185,7 +186,7 @@ async function getGeolocationAndFetchWeather() {
                         break;
                 }
                 console.error("Erro de geolocalização:", error);
-                getLocationWeatherButton.classList.remove('active');
+                getLocationWeatherButton.classList.remove('active'); // Remove a classe 'active' em caso de erro
             },
             {
                 enableHighAccuracy: true,
@@ -223,75 +224,79 @@ async function fetchWeatherDataByCoords(lat, lon) {
                 document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
 
-                document.getElementById("calculate").click();
-                // O botão de localização permanece ativo para indicar que a localização está sendo usada
+                document.getElementById("calculate").click(); // Dispara o cálculo do WBGT
+                // O botão 'active' permanece aqui, será desativado apenas em 'clear' ou 'calculate' manual
+
             } else {
                 displayError(translations[document.getElementById("language").value].fetchError);
                 console.error("Dados de temperatura/umidade/nome da cidade não encontrados na resposta da API:", data);
-                getLocationWeatherButton.classList.remove('active');
+                getLocationWeatherButton.classList.remove('active'); // Remove 'active' em caso de dados incompletos
             }
         } else {
             displayError(translations[document.getElementById("language").value].fetchError + ` (Código: ${response.status})`);
             console.error("Erro na resposta da API OpenWeatherMap:", data.message, "Código:", response.status);
-            getLocationWeatherButton.classList.remove('active');
+            getLocationWeatherButton.classList.remove('active'); // Remove 'active' em caso de erro da API
         }
     } catch (error) {
         displayError(translations[document.getElementById("language").value].fetchError);
         console.error("Erro ao conectar com a API OpenWeatherMap:", error);
-        getLocationWeatherButton.classList.remove('active');
+        getLocationWeatherButton.classList.remove('active'); // Remove 'active' em caso de erro de conexão
     }
 }
 
-// Função de interpolação linear (corrigida)
+// Função de interpolação linear
 function interpolate(x, x0, y0, x1, y1) {
-    if (x1 === x0) return y0; // Evita divisão por zero
+    if (x1 === x0) return y0;
     return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
 }
 
-// Função para obter o valor WBGT da tabela com interpolação bilinear (REVISADA E TESTADA)
+// Função para obter o valor WBGT da tabela com interpolação bilinear (REVISADA E AGORA MAIS TESTADA)
 function getWbgtValueInterpolated(temp, hum) {
     const temps = Object.keys(wbgtData).map(Number).sort((a, b) => a - b);
     const hums = Object.keys(wbgtData[temps[0]]).map(Number).sort((a, b) => a - b);
 
-    // Garante que temp e hum estão dentro dos limites da tabela
+    // Garante que temp e hum estejam dentro dos limites exatos da tabela para evitar erros de índice.
+    // Se estiver fora, será clampado para o valor mais próximo da borda da tabela.
     temp = Math.max(temps[0], Math.min(temp, temps[temps.length - 1]));
     hum = Math.max(hums[0], Math.min(hum, hums[hums.length - 1]));
 
-    // Encontrar os 4 pontos mais próximos na tabela para interpolação bilinear
-    let t0_val = temps.reduce((prev, curr) => (curr <= temp ? curr : prev), temps[0]);
-    let t1_val = temps.find(t => t > temp) || temps[temps.length - 1];
-
-    let h0_val = hums.reduce((prev, curr) => (curr <= hum ? curr : prev), hums[0]);
-    let h1_val = hums.find(h => h > hum) || hums[hums.length - 1];
-
-    // Se a temperatura ou umidade exata está nos limites, faz o t0=t1 ou h0=h1 para não interpolar na dimensão
-    if (temp === t0_val && temp === t1_val) { /* no-op */ } // Caso exato no meio ou nos extremos
-    else if (temp === t0_val && temps.indexOf(t0_val) === temps.length - 1) { /* no-op */ } // temp é o maior valor e exato
-    else if (temp === t0_val) { // Temp é um ponto exato, mas não o último, então t1 é o próximo ponto para interp.
-        t1_val = temps[temps.indexOf(t0_val) + 1] || t0_val; // Garante que t1_val é um ponto válido
-    } else if (temp === t1_val && temps.indexOf(t1_val) === 0) { /* no-op */ } // temp é o menor valor e exato
-    else if (temp === t1_val) { // Temp é um ponto exato, mas não o primeiro, então t0 é o anterior para interp.
-        t0_val = temps[temps.indexOf(t1_val) - 1] || t1_val; // Garante que t0_val é um ponto válido
+    // Encontrar os 4 pontos mais próximos para interpolação bilinear
+    // t0_val: maior temperatura <= temp
+    // t1_val: menor temperatura >= temp
+    let t0_val = temps[0];
+    for (let i = 0; i < temps.length; i++) {
+        if (temps[i] <= temp) t0_val = temps[i];
+        else break; // Já passou do valor
+    }
+    let t1_val = temps[temps.indexOf(t0_val) + 1];
+    if (t1_val === undefined) { // Se t0_val é o último na lista, não há t1_val maior
+        t1_val = t0_val;
     }
 
 
-    if (hum === h0_val && hum === h1_val) { /* no-op */ }
-    else if (hum === h0_val && hums.indexOf(h0_val) === hums.length - 1) { /* no-op */ }
-    else if (hum === h0_val) {
-        h1_val = hums[hums.indexOf(h0_val) + 1] || h0_val;
-    } else if (hum === h1_val && hums.indexOf(h1_val) === 0) { /* no-op */ }
-    else if (hum === h1_val) {
-        h0_val = hums[hums.indexOf(h1_val) - 1] || h1_val;
+    // h0_val: maior umidade <= hum
+    // h1_val: menor umidade >= hum
+    let h0_val = hums[0];
+    for (let i = 0; i < hums.length; i++) {
+        if (hums[i] <= hum) h0_val = hums[i];
+        else break; // Já passou do valor
+    }
+    let h1_val = hums[hums.indexOf(h0_val) + 1];
+    if (h1_val === undefined) { // Se h0_val é o último na lista, não há h1_val maior
+        h1_val = h0_val;
     }
 
 
-    const wbgt_t0_h0 = parseFloat(wbgtData[String(t0_val)][String(h0_val)]);
-    const wbgt_t0_h1 = parseFloat(wbgtData[String(t0_val)][String(h1_val)]);
-    const wbgt_t1_h0 = parseFloat(wbgtData[String(t1_val)][String(h0_val)]);
-    const wbgt_t1_h1 = parseFloat(wbgtData[String(t1_val)][String(h1_val)]);
+    // Obter os valores WBGT dos 4 pontos da tabela
+    // Usar String() para garantir que a chave é uma string, como no JSON
+    const wbgt_t0_h0 = parseFloat(wbgtData[String(t0_val)]?.[String(h0_val)] || 0); // Default 0 para segurança
+    const wbgt_t0_h1 = parseFloat(wbgtData[String(t0_val)]?.[String(h1_val)] || 0);
+    const wbgt_t1_h0 = parseFloat(wbgtData[String(t1_val)]?.[String(h0_val)] || 0);
+    const wbgt_t1_h1 = parseFloat(wbgtData[String(t1_val)]?.[String(h1_val)] || 0);
 
     let wbgt_interp;
 
+    // Lógica de interpolação:
     if (t0_val === t1_val && h0_val === h1_val) { // Exato match em ambos (não precisa interpolar)
         wbgt_interp = wbgt_t0_h0;
     } else if (t0_val === t1_val) { // Apenas umidade precisa de interpolação (temperatura exata)
@@ -308,6 +313,7 @@ function getWbgtValueInterpolated(temp, hum) {
     console.log(`DEBUG: WBGTs nos pontos: [${wbgt_t0_h0}, ${wbgt_t0_h1}, ${wbgt_t1_h0}, ${wbgt_t1_h1}]`);
     console.log(`DEBUG: Interpolação resultado bruto: ${wbgt_interp}`);
 
+    // Arredonda o resultado final para o inteiro mais próximo
     return Math.round(wbgt_interp);
 }
 
@@ -389,10 +395,8 @@ document.getElementById("get-location-weather").addEventListener("click", getGeo
 
 document.getElementById("calculate").addEventListener("click", () => {
     hideError();
-    // Limpa a localização exibida se o cálculo for manual
-    locationDisplay.textContent = "";
-    // Remove o 'active' do botão de localização ao calcular manualmente
-    getLocationWeatherButton.classList.remove('active');
+    locationDisplay.textContent = ""; // Limpa a localização exibida se o cálculo for manual
+    getLocationWeatherButton.classList.remove('active'); // Remove o 'active' do botão de localização ao calcular manualmente
 
 
     const temp = parseFloat(document.getElementById("temperature").value);
