@@ -52,15 +52,16 @@ button {
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    color: white;
+    color: white; /* Cor da fonte padrão para botões de fundo colorido */
 }
 
+/* Estilo específico para o botão de localização */
 #get-location-weather {
-    background-color: #D3D3D3;
-    color: black; /* Botão de localização sempre com texto preto */
+    background-color: #00aaff; /* Azul para o botão de localização */
+    color: white; /* Cor da fonte branca para o botão azul */
 }
 
-#calculate, #fetch-weather {
+#calculate, #fetch-weather { /* fetch-weather foi removido do html, mas pode ficar aqui */
     background-color: #00aaff;
 }
 
@@ -98,7 +99,7 @@ input, select {
 
 .dark-mode {
     background-color: #1c1c1c;
-    color: white; /* Cor do texto padrão para o modo escuro */
+    color: white;
 }
 
 .dark-mode .container {
@@ -106,17 +107,14 @@ input, select {
     color: white;
 }
 
-/* Regra para texto branco em fundos azuis claros e vermelhos */
 .dark-bg-text-white {
-    color: white !important; /* Usar !important para garantir a sobreposição */
+    color: white !important;
 }
 
-/* NOVA REGRA: Forçar texto PRETO em fundos AMARELOS e LARANJAS NO MODO ESCURO */
-/* Isso sobrepõe o 'color: white' do .dark-mode para esses elementos específicos */
-.dark-mode #result-box[style*="background-color: rgb(255, 255, 0)"], /* Amarelo */
-.dark-mode #result-box[style*="background-color: rgb(255, 192, 0)"] /* Laranja */
+.dark-mode #result-box[style*="background-color: rgb(255, 255, 0)"],
+.dark-mode #result-box[style*="background-color: rgb(255, 192, 0)"]
 {
-    color: black !important; /* Força a cor do texto para PRETO */
+    color: black !important;
 }
 
 
