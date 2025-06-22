@@ -141,7 +141,7 @@ async function getGeolocationAndFetchWeather() {
     hideError();
     resultBox.classList.add("hidden");
 
-    if (!OPENWEATHER_API_KEY) { // Validação da chave API
+    if (!OPENWEATHER_API_KEY) {
         displayError("Por favor, configure sua chave de API do OpenWeatherMap no script.js.");
         console.error("API Key não configurada ou inválida.");
         return;
@@ -172,7 +172,7 @@ async function getGeolocationAndFetchWeather() {
                         displayError(translations[lang].fetchError);
                         break;
                 }
-                console.error("Erro de geolocalização:", error); // Debug: erro detalhado
+                console.error("Erro de geolocalização:", error);
             },
             {
                 enableHighAccuracy: true,
@@ -217,45 +217,64 @@ async function fetchWeatherDataByCoords(lat, lon) {
     }
 }
 
-function interpolate(x, x0, y0, x1, y1) {
+function interpolate(x, x0, y0, y1) { // Removido x1 do parâmetro, será o próximo ponto
     return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
 }
 
+// NOVO: Função para obter o valor da tabela com interpolação linear
 function getWbgtValueInterpolated(temp, hum) {
     const temps = Object.keys(wbgtData).map(Number).sort((a, b) => a - b);
     const hums = Object.keys(wbgtData[temps[0]]).map(Number).sort((a, b) => a - b);
 
-    let t0 = temps[0], t1 = temps[0];
-    for (let i = 0; i < temps.length; i++) {
-        if (temps[i] <= temp) t0 = temps[i];
-        if (temps[i] >= temp) { t1 = temps[i]; break; }
+    // Encontra os 4 pontos mais próximos para interpolação bilinear
+    // Trata os casos onde temp/hum estão exatamente nos limites ou são os maiores/menores da tabela
+    let t0 = temps.find(t => t <= temp) || temps[0];
+    let t1 = temps.find(t => t > temp) || temps[temps.length - 1];
+    if (t0 === t1 && temp > t0) t1 = temps[temps.indexOf(t0) + 1] || t0; // Se temp é o maior valor exato na tabela, t1 é ele mesmo.
+    if (t0 === t1 && temp < t0) t0 = temps[temps.indexOf(t1) - 1] || t1; // Se temp é o menor valor exato na tabela, t0 é ele mesmo.
+    if (t0 === t1 && temps.length > 1) { // Se ainda são iguais e há mais de um temp, ajusta
+        if (temp === temps[0]) t1 = temps[1];
+        else if (temp === temps[temps.length-1]) t0 = temps[temps.length-2];
     }
-    if (t0 === t1 && temp > t0) t1 = temps[temps.indexOf(t0) + 1] || t0;
-    if (t0 === t1 && temp < t0) t0 = temps[temps.indexOf(t1) - 1] || t1;
 
 
-    let h0 = hums[0], h1 = hums[0];
-    for (let i = 0; i < hums.length; i++) {
-        if (hums[i] <= hum) h0 = hums[i];
-        if (hums[i] >= hum) { h1 = hums[i]; break; }
-    }
+    let h0 = hums.find(h => h <= hum) || hums[0];
+    let h1 = hums.find(h => h > hum) || hums[hums.length - 1];
     if (h0 === h1 && hum > h0) h1 = hums[hums.indexOf(h0) + 1] || h0;
     if (h0 === h1 && hum < h0) h0 = hums[hums.indexOf(h1) - 1] || h1;
+    if (h0 === h1 && hums.length > 1) { // Se ainda são iguais e há mais de um hum, ajusta
+        if (hum === hums[0]) h1 = hums[1];
+        else if (hum === hums[hums.length-1]) h0 = hums[hums.length-2];
+    }
 
+
+    // Garante que t0, t1, h0, h1 são válidos para acessar o objeto
+    t0 = Math.min(Math.max(t0, temps[0]), temps[temps.length-1]);
+    t1 = Math.min(Math.max(t1, temps[0]), temps[temps.length-1]);
+    h0 = Math.min(Math.max(h0, hums[0]), hums[hums.length-1]);
+    h1 = Math.min(Math.max(h1, hums[0]), hums[hums.length-1]);
 
     const wbgt_t0_h0 = wbgtData[String(t0)][String(h0)];
     const wbgt_t0_h1 = wbgtData[String(t0)][String(h1)];
     const wbgt_t1_h0 = wbgtData[String(t1)][String(h0)];
     const wbgt_t1_h1 = wbgtData[String(t1)][String(h1)];
 
-    if (t0 === t1 && h0 === h1) return wbgt_t0_h0;
-    if (t0 === t1) return interpolate(hum, h0, wbgt_t0_h0, h1, wbgt_t0_h1);
-    if (h0 === h1) return interpolate(temp, t0, wbgt_t0_h0, t1, wbgt_t1_h0);
+    // Interpolação Linear (corrigida para usar os 4 pontos)
+    let wbgt_interp;
 
-    const interpolated_t0 = interpolate(hum, h0, wbgt_t0_h0, h1, wbgt_t0_h1);
-    const interpolated_t1 = interpolate(hum, h0, wbgt_t1_h0, h1, wbgt_t1_h1);
+    if (t0 === t1 && h0 === h1) { // Exato match
+        wbgt_interp = wbgtData[String(t0)][String(h0)];
+    } else if (t0 === t1) { // Apenas umidade precisa de interpolação
+        wbgt_interp = interpolate(hum, h0, wbgt_t0_h0, h1, wbgt_t0_h1);
+    } else if (h0 === h1) { // Apenas temperatura precisa de interpolação
+        wbgt_interp = interpolate(temp, t0, wbgt_t0_h0, t1, wbgt_t1_h0);
+    } else { // Interpolação bilinear
+        const interpolated_t0 = interpolate(hum, h0, wbgt_t0_h0, h1, wbgt_t0_h1);
+        const interpolated_t1 = interpolate(hum, h0, wbgt_t1_h0, h1, wbgt_t1_h1);
+        wbgt_interp = interpolate(temp, t0, interpolated_t0, t1, interpolated_t1);
+    }
 
-    return Math.round(interpolate(temp, t0, interpolated_t0, t1, interpolated_t1));
+    return Math.round(wbgt_interp); // Arredonda o resultado final para o inteiro mais próximo
 }
 
 
@@ -330,7 +349,6 @@ document.getElementById("dark-mode").addEventListener("change", () => {
     document.body.classList.toggle("dark-mode");
 });
 
-// Este é o único local onde getGeolocationAndFetchWeather deve ser chamado diretamente.
 document.getElementById("get-location-weather").addEventListener("click", getGeolocationAndFetchWeather);
 
 
