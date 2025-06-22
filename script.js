@@ -219,71 +219,73 @@ async function fetchWeatherDataByCoords(lat, lon) {
     }
 }
 
+// Função de interpolação linear
 function interpolate(x, x0, y0, x1, y1) {
     if (x1 === x0) return y0;
     return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
 }
 
+// Função para obter o valor WBGT da tabela com interpolação bilinear (REVISADA E MAIS ROBUSTA)
 function getWbgtValueInterpolated(temp, hum) {
+    // Ordenar as chaves numéricas da tabela de WBGT
     const temps = Object.keys(wbgtData).map(Number).sort((a, b) => a - b);
     const hums = Object.keys(wbgtData[temps[0]]).map(Number).sort((a, b) => a - b);
 
-    let t0_val = temps.filter(t => t <= temp).pop();
-    let t1_val = temps.filter(t => t > temp).shift();
-
-    let h0_val = hums.filter(h => h <= hum).pop();
-    let h1_val = hums.filter(h => h > hum).shift();
-
-    if (t0_val === undefined) t0_val = temps[0];
-    if (t1_val === undefined) t1_val = temps[temps.length - 1];
-    if (h0_val === undefined) h0_val = hums[0];
-    if (h1_val === undefined) h1_val = hums[hums.length - 1];
-
-    if (t0_val === t1_val && temps.length > 1) {
-        if (temp < temps[0]) { t1_val = temps[0]; t0_val = temps[0]; } // Abaixo do menor
-        else if (temp > temps[temps.length-1]) { t0_val = temps[temps.length-1]; t1_val = temps[temps.length-1]; } // Acima do maior
-        else if (temp === t0_val) { // Exato match em t0_val, mas não é o último, use t1 para interp.
-            t1_val = temps[temps.indexOf(t0_val) + 1] || t0_val;
-        } else { // Deve ser o menor valor exato, t0=t1
-             t0_val = temps[temps.indexOf(t1_val) - 1] || t1_val;
-        }
+    // Encontrar os pontos de temperatura inferior (t0_val) e superior (t1_val) para interpolação
+    let t0_val = temps[0];
+    let t1_val = temps[temps.length - 1];
+    for (let i = 0; i < temps.length; i++) {
+        if (temps[i] <= temp) t0_val = temps[i];
+        if (temps[i] >= temp) { t1_val = temps[i]; break; }
     }
-
-    if (h0_val === h1_val && hums.length > 1) {
-        if (hum < hums[0]) { h1_val = hums[0]; h0_val = hums[0]; }
-        else if (hum > hums[hums.length-1]) { h0_val = hums[hums.length-1]; h1_val = hums[hums.length-1]; }
-        else if (hum === h0_val) {
-            h1_val = hums[hums.indexOf(h0_val) + 1] || h0_val;
-        } else {
-            h0_val = hums[hums.indexOf(h1_val) - 1] || h1_val;
-        }
+    // Lidar com casos onde a temperatura está exatamente em um ponto ou fora dos limites mas dentro da faixa de interpolação
+    if (temp <= temps[0]) { t0_val = temps[0]; t1_val = temps[0]; }
+    else if (temp >= temps[temps.length - 1]) { t0_val = temps[temps.length - 1]; t1_val = temps[temps.length - 1]; }
+    else if (t0_val === t1_val) { // Significa que temp é exatamente um ponto da tabela
+        t1_val = t0_val;
     }
 
 
-    const wbgt_t0_h0 = wbgtData[String(t0_val)][String(h0_val)];
-    const wbgt_t0_h1 = wbgtData[String(t0_val)][String(h1_val)];
-    const wbgt_t1_h0 = wbgtData[String(t1_val)][String(h0_val)];
-    const wbgt_t1_h1 = wbgtData[String(t1_val)][String(h1_val)];
+    // Encontrar os pontos de umidade inferior (h0_val) e superior (h1_val) para interpolação
+    let h0_val = hums[0];
+    let h1_val = hums[hums.length - 1];
+    for (let i = 0; i < hums.length; i++) {
+        if (hums[i] <= hum) h0_val = hums[i];
+        if (hums[i] >= hum) { h1_val = hums[i]; break; }
+    }
+    // Lidar com casos onde a umidade está exatamente em um ponto ou fora dos limites
+    if (hum <= hums[0]) { h0_val = hums[0]; h1_val = hums[0]; }
+    else if (hum >= hums[hums.length - 1]) { h0_val = hums[hums.length - 1]; h1_val = hums[hums.length - 1]; }
+    else if (h0_val === h1_val) { // Significa que hum é exatamente um ponto da tabela
+        h1_val = h0_val;
+    }
+
+
+    // Obter os valores WBGT dos 4 pontos da tabela
+    const wbgt_t0_h0 = parseFloat(wbgtData[String(t0_val)][String(h0_val)]);
+    const wbgt_t0_h1 = parseFloat(wbgtData[String(t0_val)][String(h1_val)]);
+    const wbgt_t1_h0 = parseFloat(wbgtData[String(t1_val)][String(h0_val)]);
+    const wbgt_t1_h1 = parseFloat(wbgtData[String(t1_val)][String(h1_val)]);
 
     let wbgt_interp;
 
-    if (t0_val === t1_val && h0_val === h1_val) {
+    if (t0_val === t1_val && h0_val === h1_val) { // Exato match em ambos (não precisa interpolar)
         wbgt_interp = wbgt_t0_h0;
-    } else if (t0_val === t1_val) {
+    } else if (t0_val === t1_val) { // Apenas umidade precisa de interpolação (temperatura exata)
         wbgt_interp = interpolate(hum, h0_val, wbgt_t0_h0, h1_val, wbgt_t0_h1);
-    } else if (h0_val === h1_val) {
+    } else if (h0_val === h1_val) { // Apenas temperatura precisa de interpolação (umidade exata)
         wbgt_interp = interpolate(temp, t0_val, wbgt_t0_h0, t1_val, wbgt_t1_h0);
-    } else {
+    } else { // Interpolação bilinear completa
         const interpolated_at_h0 = interpolate(temp, t0_val, wbgt_t0_h0, t1_val, wbgt_t1_h0);
         const interpolated_at_h1 = interpolate(temp, t0_val, wbgt_t0_h1, t1_val, wbgt_t1_h1);
-        wbgt_interp = interpolate(hum, h0_val, interpolated_at_h0, h1_val, interpolated_h1);
+        wbgt_interp = interpolate(hum, h0_val, interpolated_at_h0, h1_val, interpolated_at_h1);
     }
     
-    console.log(`Temp: ${temp}, Hum: ${hum} -> t0:${t0_val}, t1:${t1_val}, h0:${h0_val}, h1:${h1_val}`);
+    console.log(`Temp: ${temp}, Hum: ${hum} -> t0=${t0_val}, t1=${t1_val}, h0=${h0_val}, h1=${h1_val}`);
     console.log(`WBGTs nos pontos: [${wbgt_t0_h0}, ${wbgt_t0_h1}, ${wbgt_t1_h0}, ${wbgt_t1_h1}]`);
     console.log(`Interpolação resultado bruto: ${wbgt_interp}`);
 
-    // Arredonda para o inteiro mais próximo
+    // Arredonda o resultado final para o inteiro mais próximo
     return Math.round(wbgt_interp);
 }
 
