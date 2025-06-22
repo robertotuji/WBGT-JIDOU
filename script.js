@@ -97,7 +97,7 @@ const translations = {
     }
 };
 
-const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e"; // Sua chave de API está aqui
+const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e";
 const OPENWEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
 
 
@@ -138,18 +138,20 @@ function hideError() {
 }
 
 async function getGeolocationAndFetchWeather() {
-    hideError(); // Limpa erros anteriores
-    resultBox.classList.add("hidden"); // Esconde resultados anteriores
+    hideError();
+    resultBox.classList.add("hidden");
 
-   // Validação APENAS para o placeholder da chave, não para a chave que já está inserida
-if (!OPENWEATHER_API_KEY) { // Apenas verifica se a chave está vazia
-    displayError("Por favor, configure sua chave de API do OpenWeatherMap no script.js.");
-    console.error("API Key não configurada ou inválida.");
-    return;
-}
+    if (!OPENWEATHER_API_KEY) { // Validação da chave API
+        displayError("Por favor, configure sua chave de API do OpenWeatherMap no script.js.");
+        console.error("API Key não configurada ou inválida.");
+        return;
+    }
+
+    console.log("Attempting to get geolocation..."); // Debug: para ver se a função está sendo chamada
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
+                console.log("Geolocation obtained:", position); // Debug: para ver se a localização foi obtida
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 await fetchWeatherDataByCoords(lat, lon);
@@ -170,7 +172,7 @@ if (!OPENWEATHER_API_KEY) { // Apenas verifica se a chave está vazia
                         displayError(translations[lang].fetchError);
                         break;
                 }
-                console.error("Erro de geolocalização:", error);
+                console.error("Erro de geolocalização:", error); // Debug: erro detalhado
             },
             {
                 enableHighAccuracy: true,
@@ -180,6 +182,7 @@ if (!OPENWEATHER_API_KEY) { // Apenas verifica se a chave está vazia
         );
     } else {
         displayError("Seu navegador não suporta geolocalização.");
+        console.error("Geolocation is not supported by this browser.");
     }
 }
 
@@ -205,8 +208,6 @@ async function fetchWeatherDataByCoords(lat, lon) {
                 console.error("Dados de temperatura ou umidade não encontrados na resposta da API:", data);
             }
         } else {
-            // Se a resposta da API não for OK, exibe a mensagem de erro.
-            // Erros comuns da API: 401 (API Key inválida), 429 (Limite de requisições excedido)
             displayError(translations[document.getElementById("language").value].fetchError + ` (Código: ${response.status})`);
             console.error("Erro na resposta da API OpenWeatherMap:", data.message, "Código:", response.status);
         }
@@ -329,6 +330,7 @@ document.getElementById("dark-mode").addEventListener("change", () => {
     document.body.classList.toggle("dark-mode");
 });
 
+// Este é o único local onde getGeolocationAndFetchWeather deve ser chamado diretamente.
 document.getElementById("get-location-weather").addEventListener("click", getGeolocationAndFetchWeather);
 
 
