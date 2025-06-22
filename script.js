@@ -167,7 +167,6 @@ async function getGeolocationAndFetchWeather() {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 await fetchWeatherDataByCoords(lat, lon);
-                // NOTA: A classe 'active' do botão será removida em fetchWeatherDataByCoords se houver erro ou ao final do cálculo bem-sucedido.
             },
             (error) => {
                 const lang = document.getElementById("language").value;
@@ -186,7 +185,7 @@ async function getGeolocationAndFetchWeather() {
                         break;
                 }
                 console.error("Erro de geolocalização:", error);
-                getLocationWeatherButton.classList.remove('active'); // Remove a classe 'active' em caso de erro
+                getLocationWeatherButton.classList.remove('active');
             },
             {
                 enableHighAccuracy: true,
@@ -221,14 +220,12 @@ async function fetchWeatherDataByCoords(lat, lon) {
                 // Exibe a localização
                 const lang = document.getElementById("language").value;
                 locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryCode}`;
-                console.log(`DEBUG: Localizacao definida na UI: ${cityName}, ${countryCode}`); // NOVO: Debug da localização
+                console.log(`DEBUG: Localizacao definida na UI: ${cityName}, ${countryCode}`);
 
                 document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
 
-                document.getElementById("calculate").click(); // Dispara o cálculo do WBGT
-                // NOVO: A classe 'active' do botão de localização é mantida até o final do cálculo bem-sucedido
-                // ou removida se houver um erro em calculateWBGT.
+                document.getElementById("calculate").click();
 
             } else {
                 displayError(translations[document.getElementById("language").value].fetchError);
@@ -256,27 +253,24 @@ function getWbgtValueInterpolated(temp, hum) {
     const temps = Object.keys(wbgtData).map(Number).sort((a, b) => a - b);
     const hums = Object.keys(wbgtData[temps[0]]).map(Number).sort((a, b) => a - b);
 
-    // Garante que temp e hum estão dentro dos limites da tabela para evitar erros de índice
     temp = Math.max(temps[0], Math.min(temp, temps[temps.length - 1]));
     hum = Math.max(hums[0], Math.min(hum, hums[hums.length - 1]));
 
 
-    // Encontrar os 4 pontos mais próximos na tabela para interpolação bilinear
     let t0_val = temps[0];
     let t1_val = temps[temps.length - 1];
     for (let i = 0; i < temps.length; i++) {
         if (temps[i] <= temp) t0_val = temps[i];
         if (temps[i] >= temp) { t1_val = temps[i]; break; }
     }
-    // Tratamento de borda e pontos exatos
-    if (t0_val === t1_val && temp !== t0_val) { // Se apenas um ponto foi encontrado, e temp não é exato
-        if (temp < t0_val && temps.indexOf(t0_val) > 0) t0_val = temps[temps.indexOf(t0_val) - 1];
-        else if (temp > t0_val && temps.indexOf(t0_val) < temps.length - 1) t1_val = temps[temps.indexOf(t0_val) + 1];
-    } else if (t0_val === t1_val && temp === t0_val) { // Exato match na tabela
-        // Não faz nada, t0_val e t1_val já estão corretos
-    } else if (t0_val === t1_val && temps.length > 1) { // Caso de t0=t1 mas temp está entre pontos
-        // Isso não deveria acontecer com a lógica find acima, mas como fallback
-        t1_val = temps[temps.indexOf(t0_val) + 1] || t0_val;
+    if (temp === temps[temps.length - 1]) {
+        t0_val = temps[temps.length - 1];
+        t1_val = temps[temps.length - 1];
+    } else if (temp === temps[0]) {
+        t0_val = temps[0];
+        t1_val = temps[0];
+    } else if (t0_val === t1_val && temps.indexOf(t0_val) < temps.length - 1) {
+        t1_val = temps[temps.indexOf(t0_val) + 1];
     }
     
 
@@ -286,14 +280,14 @@ function getWbgtValueInterpolated(temp, hum) {
         if (hums[i] <= hum) h0_val = hums[i];
         if (hums[i] >= hum) { h1_val = hums[i]; break; }
     }
-    // Tratamento de borda e pontos exatos
-    if (h0_val === h1_val && hum !== h0_val) {
-        if (hum < h0_val && hums.indexOf(h0_val) > 0) h0_val = hums[hums.indexOf(h0_val) - 1];
-        else if (hum > h0_val && hums.indexOf(h0_val) < hums.length - 1) h1_val = hums[hums.indexOf(h0_val) + 1];
-    } else if (h0_val === h1_val && hum === h0_val) {
-        // Não faz nada, h0_val e h1_val já estão corretos
-    } else if (h0_val === h1_val && hums.length > 1) {
-        h1_val = hums[hums.indexOf(h0_val) + 1] || h0_val;
+    if (hum === hums[hums.length - 1]) {
+        h0_val = hums[hums.length - 1];
+        h1_val = hums[hums.length - 1];
+    } else if (hum === hums[0]) {
+        h0_val = hums[0];
+        h1_val = hums[0];
+    } else if (h0_val === h1_val && hums.indexOf(h0_val) < hums.length - 1) {
+        h1_val = hums[hums.indexOf(h0_val) + 1];
     }
 
 
@@ -402,7 +396,7 @@ document.getElementById("get-location-weather").addEventListener("click", getGeo
 document.getElementById("calculate").addEventListener("click", () => {
     hideError();
     locationDisplay.textContent = ""; // Limpa a localização exibida se o cálculo for manual
-    getLocationWeatherButton.classList.remove('active'); // Remove o 'active' do botão de localização ao calcular manualmente
+    getLocationWeatherButton.classList.remove('active');
 
 
     const temp = parseFloat(document.getElementById("temperature").value);
@@ -468,9 +462,3 @@ window.addEventListener('resize', () => {
             activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
-});
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    updateLanguage(document.getElementById("language").value);
-});
