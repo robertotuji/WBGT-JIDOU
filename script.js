@@ -147,11 +147,11 @@ async function getGeolocationAndFetchWeather() {
         return;
     }
 
-    console.log("Attempting to get geolocation..."); // Debug: para ver se a função está sendo chamada
+    console.log("Clicado no botão: Tentando obter geolocalização..."); // Debug: Confirma clique
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
-                console.log("Geolocation obtained:", position); // Debug: para ver se a localização foi obtida
+                console.log("Geolocalização obtida:", position.coords.latitude, position.coords.longitude); // Debug: Coordenadas
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 await fetchWeatherDataByCoords(lat, lon);
@@ -188,10 +188,12 @@ async function getGeolocationAndFetchWeather() {
 
 async function fetchWeatherDataByCoords(lat, lon) {
     const url = `${OPENWEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`;
+    console.log("Fetching weather from URL:", url); // Debug: Mostra o URL da API
 
     try {
         const response = await fetch(url);
         const data = await response.json();
+        console.log("API Response:", data); // Debug: Mostra a resposta completa da API
 
         if (response.ok) {
             if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined) {
@@ -217,62 +219,57 @@ async function fetchWeatherDataByCoords(lat, lon) {
     }
 }
 
-function interpolate(x, x0, y0, y1) { // Removido x1 do parâmetro, será o próximo ponto
+// Função de interpolação linear (corrigida para usar x1 no cálculo)
+function interpolate(x, x0, y0, x1, y1) {
+    if (x1 === x0) return y0; // Evita divisão por zero se os pontos são iguais
     return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
 }
 
-// NOVO: Função para obter o valor da tabela com interpolação linear
+// Função para obter o valor WBGT da tabela com interpolação (revisada)
 function getWbgtValueInterpolated(temp, hum) {
     const temps = Object.keys(wbgtData).map(Number).sort((a, b) => a - b);
     const hums = Object.keys(wbgtData[temps[0]]).map(Number).sort((a, b) => a - b);
 
     // Encontra os 4 pontos mais próximos para interpolação bilinear
-    // Trata os casos onde temp/hum estão exatamente nos limites ou são os maiores/menores da tabela
-    let t0 = temps.find(t => t <= temp) || temps[0];
-    let t1 = temps.find(t => t > temp) || temps[temps.length - 1];
-    if (t0 === t1 && temp > t0) t1 = temps[temps.indexOf(t0) + 1] || t0; // Se temp é o maior valor exato na tabela, t1 é ele mesmo.
-    if (t0 === t1 && temp < t0) t0 = temps[temps.indexOf(t1) - 1] || t1; // Se temp é o menor valor exato na tabela, t0 é ele mesmo.
-    if (t0 === t1 && temps.length > 1) { // Se ainda são iguais e há mais de um temp, ajusta
-        if (temp === temps[0]) t1 = temps[1];
-        else if (temp === temps[temps.length-1]) t0 = temps[temps.length-2];
-    }
+    let t0_val = temps.filter(t => t <= temp).pop(); // Maior temp <= temp
+    let t1_val = temps.filter(t => t >= temp).shift(); // Menor temp >= temp
+
+    let h0_val = hums.filter(h => h <= hum).pop(); // Maior hum <= hum
+    let h1_val = hums.filter(h => h >= hum).shift(); // Menor hum >= hum
+
+    // Lidar com casos de borda se o valor exato estiver no limite superior ou inferior
+    if (t0_val === undefined) t0_val = temps[0];
+    if (t1_val === undefined) t1_val = temps[temps.length - 1];
+    if (h0_val === undefined) h0_val = hums[0];
+    if (h1_val === undefined) h1_val = hums[hums.length - 1];
+
+    // Se o valor de entrada for exatamente um valor na tabela, não precisa de interpolação para essa dimensão
+    if (t0_val === t1_val) t1_val = t0_val;
+    if (h0_val === h1_val) h1_val = h0_val;
 
 
-    let h0 = hums.find(h => h <= hum) || hums[0];
-    let h1 = hums.find(h => h > hum) || hums[hums.length - 1];
-    if (h0 === h1 && hum > h0) h1 = hums[hums.indexOf(h0) + 1] || h0;
-    if (h0 === h1 && hum < h0) h0 = hums[hums.indexOf(h1) - 1] || h1;
-    if (h0 === h1 && hums.length > 1) { // Se ainda são iguais e há mais de um hum, ajusta
-        if (hum === hums[0]) h1 = hums[1];
-        else if (hum === hums[hums.length-1]) h0 = hums[hums.length-2];
-    }
+    const wbgt_t0_h0 = wbgtData[String(t0_val)][String(h0_val)];
+    const wbgt_t0_h1 = wbgtData[String(t0_val)][String(h1_val)];
+    const wbgt_t1_h0 = wbgtData[String(t1_val)][String(h0_val)];
+    const wbgt_t1_h1 = wbgtData[String(t1_val)][String(h1_val)];
 
-
-    // Garante que t0, t1, h0, h1 são válidos para acessar o objeto
-    t0 = Math.min(Math.max(t0, temps[0]), temps[temps.length-1]);
-    t1 = Math.min(Math.max(t1, temps[0]), temps[temps.length-1]);
-    h0 = Math.min(Math.max(h0, hums[0]), hums[hums.length-1]);
-    h1 = Math.min(Math.max(h1, hums[0]), hums[hums.length-1]);
-
-    const wbgt_t0_h0 = wbgtData[String(t0)][String(h0)];
-    const wbgt_t0_h1 = wbgtData[String(t0)][String(h1)];
-    const wbgt_t1_h0 = wbgtData[String(t1)][String(h0)];
-    const wbgt_t1_h1 = wbgtData[String(t1)][String(h1)];
-
-    // Interpolação Linear (corrigida para usar os 4 pontos)
     let wbgt_interp;
 
-    if (t0 === t1 && h0 === h1) { // Exato match
-        wbgt_interp = wbgtData[String(t0)][String(h0)];
-    } else if (t0 === t1) { // Apenas umidade precisa de interpolação
-        wbgt_interp = interpolate(hum, h0, wbgt_t0_h0, h1, wbgt_t0_h1);
-    } else if (h0 === h1) { // Apenas temperatura precisa de interpolação
-        wbgt_interp = interpolate(temp, t0, wbgt_t0_h0, t1, wbgt_t1_h0);
+    if (t0_val === t1_val && h0_val === h1_val) { // Exato match em ambos
+        wbgt_interp = wbgt_t0_h0;
+    } else if (t0_val === t1_val) { // Apenas umidade precisa de interpolação (temp exata)
+        wbgt_interp = interpolate(hum, h0_val, wbgt_t0_h0, h1_val, wbgt_t0_h1);
+    } else if (h0_val === h1_val) { // Apenas temperatura precisa de interpolação (hum exata)
+        wbgt_interp = interpolate(temp, t0_val, wbgt_t0_h0, t1_val, wbgt_t1_h0);
     } else { // Interpolação bilinear
-        const interpolated_t0 = interpolate(hum, h0, wbgt_t0_h0, h1, wbgt_t0_h1);
-        const interpolated_t1 = interpolate(hum, h0, wbgt_t1_h0, h1, wbgt_t1_h1);
-        wbgt_interp = interpolate(temp, t0, interpolated_t0, t1, interpolated_t1);
+        const interpolated_h0 = interpolate(temp, t0_val, wbgt_t0_h0, t1_val, wbgt_t1_h0);
+        const interpolated_h1 = interpolate(temp, t0_val, wbgt_t0_h1, t1_val, wbgt_t1_h1);
+        wbgt_interp = interpolate(hum, h0_val, interpolated_h0, h1_val, interpolated_h1);
     }
+    
+    console.log(`Temp: ${temp}, Hum: ${hum} -> t0_val:${t0_val}, t1_val:${t1_val}, h0_val:${h0_val}, h1_val:${h1_val}`);
+    console.log(`WBGTs nos pontos: [${wbgt_t0_h0}, ${wbgt_t0_h1}, ${wbgt_t1_h0}, ${wbgt_t1_h1}]`);
+    console.log(`Interpolação resultado bruto: ${wbgt_interp}`);
 
     return Math.round(wbgt_interp); // Arredonda o resultado final para o inteiro mais próximo
 }
@@ -284,6 +281,7 @@ function calculateWBGT(temp, hum) {
         return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
     }
 
+    // Removida a validação de "5 em 5" e "inteiro" para permitir dados da API
     if (temp < 21 || temp > 40) {
         displayError(translations[document.getElementById("language").value].tempOutOfRange);
         return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
@@ -295,8 +293,9 @@ function calculateWBGT(temp, hum) {
 
     const wbgtValue = getWbgtValueInterpolated(temp, hum);
 
-    if (wbgtValue === null) {
-        displayError(translations[document.getElementById("language").value].invalidInput);
+    if (wbgtValue === null || isNaN(wbgtValue)) { // Verifica se é null ou NaN
+        displayError(translations[document.getElementById("language").value].fetchError); // Usando fetchError para qualquer problema de cálculo
+        console.error("Erro no cálculo do WBGT ou valor é nulo/NaN:", wbgtValue);
         return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
     }
 
@@ -365,7 +364,7 @@ document.getElementById("calculate").addEventListener("click", () => {
 
     const { wbgt, levelIdx, color } = calculateWBGT(temp, hum);
 
-    if (wbgt === null) {
+    if (wbgt === null || isNaN(wbgt)) { // Verifica se é null ou NaN
         resultBox.classList.add("hidden");
         return;
     }
