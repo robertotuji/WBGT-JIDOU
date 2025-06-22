@@ -110,7 +110,8 @@ const errorMessageBox = document.getElementById("error-message-box");
 const errorMessage = document.getElementById("error-message");
 const container = document.querySelector('.container');
 const manualLabel = document.getElementById('manual-label');
-const locationDisplay = document.getElementById('location-display'); // NOVO: Elemento para exibir a localização
+const locationDisplay = document.getElementById('location-display');
+const getLocationWeatherButton = document.getElementById('get-location-weather'); // Pega o botão de localização
 
 let wbgtData = {};
 
@@ -132,7 +133,9 @@ loadWbgtData();
 
 function displayError(message) {
     resultBox.classList.add("hidden");
-    locationDisplay.textContent = ""; // Limpa a exibição da localização em caso de erro
+    locationDisplay.textContent = "";
+    // NOVO: Remove a classe 'active' do botão de localização em caso de erro
+    getLocationWeatherButton.classList.remove('active');
     errorMessageBox.classList.remove("hidden");
     errorMessage.innerHTML = message;
 }
@@ -140,16 +143,24 @@ function displayError(message) {
 function hideError() {
     errorMessageBox.classList.add("hidden");
     errorMessage.innerHTML = "";
-    locationDisplay.textContent = ""; // Limpa a exibição da localização ao esconder o erro
+    locationDisplay.textContent = "";
+    // NOVO: Garante que o botão de localização volte ao normal quando o erro é escondido
+    getLocationWeatherButton.classList.remove('active');
 }
 
 async function getGeolocationAndFetchWeather() {
     hideError();
     resultBox.classList.add("hidden");
+    locationDisplay.textContent = ""; // Garante que a localização é limpa antes de nova busca
+    
+    // NOVO: Adiciona a classe 'active' ao botão de localização ao iniciar a busca
+    getLocationWeatherButton.classList.add('active');
 
     if (!OPENWEATHER_API_KEY) {
         displayError("Por favor, configure sua chave de API do OpenWeatherMap no script.js.");
         console.error("API Key não configurada ou inválida.");
+        // NOVO: Remove a classe 'active' se a chave não estiver configurada
+        getLocationWeatherButton.classList.remove('active');
         return;
     }
 
@@ -179,6 +190,8 @@ async function getGeolocationAndFetchWeather() {
                         break;
                 }
                 console.error("Erro de geolocalização:", error);
+                // NOVO: Remove a classe 'active' se houver erro na geolocalização
+                getLocationWeatherButton.classList.remove('active');
             },
             {
                 enableHighAccuracy: true,
@@ -189,6 +202,8 @@ async function getGeolocationAndFetchWeather() {
     } else {
         displayError("Seu navegador não suporta geolocalização.");
         console.error("Geolocation is not supported by this browser.");
+        // NOVO: Remove a classe 'active' se o navegador não suportar
+        getLocationWeatherButton.classList.remove('active');
     }
 }
 
@@ -202,32 +217,39 @@ async function fetchWeatherDataByCoords(lat, lon) {
         console.log("API Response:", data);
 
         if (response.ok) {
+            // Garante que todos os dados necessários estão presentes antes de usar
             if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined && data.name && data.sys && data.sys.country) {
                 const temp = data.main.temp;
                 const humidity = data.main.humidity;
                 const cityName = data.name;
                 const countryCode = data.sys.country;
 
-                // Exibe a localização APENAS SE VIER DA API
+                // Exibe a localização
                 const lang = document.getElementById("language").value;
                 locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryCode}`;
-
+                
                 document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
 
-                document.getElementById("calculate").click();
+                document.getElementById("calculate").click(); // Dispara o cálculo do WBGT
 
             } else {
                 displayError(translations[document.getElementById("language").value].fetchError);
                 console.error("Dados de temperatura/umidade/nome da cidade não encontrados na resposta da API:", data);
+                // NOVO: Remove a classe 'active' em caso de dados incompletos
+                getLocationWeatherButton.classList.remove('active');
             }
         } else {
             displayError(translations[document.getElementById("language").value].fetchError + ` (Código: ${response.status})`);
             console.error("Erro na resposta da API OpenWeatherMap:", data.message, "Código:", response.status);
+            // NOVO: Remove a classe 'active' em caso de erro da API
+            getLocationWeatherButton.classList.remove('active');
         }
     } catch (error) {
         displayError(translations[document.getElementById("language").value].fetchError);
         console.error("Erro ao conectar com a API OpenWeatherMap:", error);
+        // NOVO: Remove a classe 'active' em caso de erro de conexão
+        getLocationWeatherButton.classList.remove('active');
     }
 }
 
@@ -366,7 +388,7 @@ function updateLanguage(lang) {
     document.getElementById("get-location-weather").textContent = t.getLocationWeather;
     if (manualLabel) manualLabel.textContent = t.manualLabel;
 
-    hideError(); // NOVO: Esconde qualquer erro ao mudar o idioma
+    hideError();
 }
 
 document.getElementById("language").addEventListener("change", (e) => {
@@ -384,6 +406,9 @@ document.getElementById("calculate").addEventListener("click", () => {
     hideError();
     // NOVO: Limpa a localização exibida se o cálculo for manual
     locationDisplay.textContent = "";
+    // NOVO: Remove a classe 'active' do botão de localização ao calcular manualmente
+    getLocationWeatherButton.classList.remove('active');
+
 
     const temp = parseFloat(document.getElementById("temperature").value);
     const hum = parseFloat(document.getElementById("humidity").value);
@@ -418,7 +443,9 @@ document.getElementById("clear").addEventListener("click", () => {
     document.getElementById("humidity").value = "";
     resultBox.classList.add("hidden");
     hideError();
-    locationDisplay.textContent = ""; // NOVO: Garante que a localização também seja limpa ao usar o botão Limpar
+    locationDisplay.textContent = "";
+    // NOVO: Garante que o botão de localização volte ao normal ao limpar
+    getLocationWeatherButton.classList.remove('active');
 });
 
 let originalScrollTop = 0;
