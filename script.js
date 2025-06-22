@@ -15,6 +15,7 @@ const translations = {
         locationTimeout: "位置情報の取得がタイムアウトしました。もう一度お試しください。",
         fetchError: "気象データの取得中にエラーが発生しました。",
         manualLabel: "または手動で入力:",
+        locationDisplayPrefix: "場所:", // Nova tradução
         levels: [
             "ほぼ安全",
             "注意",
@@ -39,6 +40,7 @@ const translations = {
         locationTimeout: "Tempo esgotado para obter a localização. Por favor, tente novamente.",
         fetchError: "Erro ao buscar dados do clima. Por favor, tente novamente mais tarde.",
         manualLabel: "Ou insira manualmente:",
+        locationDisplayPrefix: "Local:", // Nova tradução
         levels: [
             "Quase Seguro",
             "Atenção",
@@ -63,6 +65,7 @@ const translations = {
         locationTimeout: "The request to get user location timed out. Please try again.",
         fetchError: "Error fetching weather data. Please try again later.",
         manualLabel: "Or enter manually:",
+        locationDisplayPrefix: "Location:", // Nova tradução
         levels: [
             "Almost Safe",
             "Caution",
@@ -87,6 +90,7 @@ const translations = {
         locationTimeout: "Permintaan untuk mendapatkan lokasi pengguna telah habis waktu. Silakan coba lagi.",
         fetchError: "Terjadi kesalahan saat mengambil data cuaca.",
         manualLabel: "Atau masukkan secara manual:",
+        locationDisplayPrefix: "Lokasi:", // Nova tradução
         levels: [
             "Hampir Aman",
             "Waspada",
@@ -107,6 +111,7 @@ const errorMessageBox = document.getElementById("error-message-box");
 const errorMessage = document.getElementById("error-message");
 const container = document.querySelector('.container');
 const manualLabel = document.getElementById('manual-label');
+const locationDisplay = document.getElementById('location-display'); // NOVO: Elemento para exibir a localização
 
 let wbgtData = {};
 
@@ -128,6 +133,7 @@ loadWbgtData();
 
 function displayError(message) {
     resultBox.classList.add("hidden");
+    locationDisplay.textContent = ""; // Limpa a exibição da localização em caso de erro
     errorMessageBox.classList.remove("hidden");
     errorMessage.innerHTML = message;
 }
@@ -135,6 +141,7 @@ function displayError(message) {
 function hideError() {
     errorMessageBox.classList.add("hidden");
     errorMessage.innerHTML = "";
+    locationDisplay.textContent = ""; // Limpa a exibição da localização ao esconder o erro
 }
 
 async function getGeolocationAndFetchWeather() {
@@ -196,9 +203,15 @@ async function fetchWeatherDataByCoords(lat, lon) {
         console.log("API Response:", data);
 
         if (response.ok) {
-            if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined) {
+            if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined && data.name && data.sys && data.sys.country) {
                 const temp = data.main.temp;
                 const humidity = data.main.humidity;
+                const cityName = data.name;
+                const countryCode = data.sys.country;
+
+                // Exibe a localização
+                const lang = document.getElementById("language").value;
+                locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryCode}`;
 
                 document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
@@ -207,7 +220,7 @@ async function fetchWeatherDataByCoords(lat, lon) {
 
             } else {
                 displayError(translations[document.getElementById("language").value].fetchError);
-                console.error("Dados de temperatura ou umidade não encontrados na resposta da API:", data);
+                console.error("Dados de temperatura/umidade/nome da cidade não encontrados na resposta da API:", data);
             }
         } else {
             displayError(translations[document.getElementById("language").value].fetchError + ` (Código: ${response.status})`);
@@ -219,42 +232,31 @@ async function fetchWeatherDataByCoords(lat, lon) {
     }
 }
 
-// Função de interpolação linear
 function interpolate(x, x0, y0, x1, y1) {
-    if (x1 === x0) return y0; // Evita divisão por zero
+    if (x1 === x0) return y0;
     return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
 }
 
-// Função para obter o valor WBGT da tabela com interpolação bilinear (REVISADA E MAIS ROBUSTA)
 function getWbgtValueInterpolated(temp, hum) {
-    // Ordenar as chaves numéricas da tabela de WBGT
     const temps = Object.keys(wbgtData).map(Number).sort((a, b) => a - b);
     const hums = Object.keys(wbgtData[temps[0]]).map(Number).sort((a, b) => a - b);
 
-    // Garante que temp e hum estão dentro dos limites da tabela para evitar erros de índice
     temp = Math.max(temps[0], Math.min(temp, temps[temps.length - 1]));
     hum = Math.max(hums[0], Math.min(hum, hums[hums.length - 1]));
 
-
-    // Encontrar os 4 pontos mais próximos na tabela para interpolação bilinear
     let t0_val = temps[0];
     let t1_val = temps[temps.length - 1];
     for (let i = 0; i < temps.length; i++) {
         if (temps[i] <= temp) t0_val = temps[i];
         if (temps[i] >= temp) { t1_val = temps[i]; break; }
     }
-    // Caso de borda: se temp for o valor máximo da tabela, t0=t1
     if (temp === temps[temps.length - 1]) {
         t0_val = temps[temps.length - 1];
         t1_val = temps[temps.length - 1];
-    }
-    // Caso de borda: se temp for o valor mínimo da tabela, t0=t1
-    else if (temp === temps[0]) {
+    } else if (temp === temps[0]) {
         t0_val = temps[0];
         t1_val = temps[0];
-    }
-    // Se t0_val ainda for igual a t1_val (e não é um valor de borda), ajuste t1_val para o próximo
-    else if (t0_val === t1_val && temps.indexOf(t0_val) < temps.length - 1) {
+    } else if (t0_val === t1_val && temps.indexOf(t0_val) < temps.length - 1) {
         t1_val = temps[temps.indexOf(t0_val) + 1];
     }
     
@@ -265,23 +267,17 @@ function getWbgtValueInterpolated(temp, hum) {
         if (hums[i] <= hum) h0_val = hums[i];
         if (hums[i] >= hum) { h1_val = hums[i]; break; }
     }
-    // Caso de borda: se hum for o valor máximo da tabela, h0=h1
     if (hum === hums[hums.length - 1]) {
         h0_val = hums[hums.length - 1];
         h1_val = hums[hums.length - 1];
-    }
-    // Caso de borda: se hum for o valor mínimo da tabela, h0=h1
-    else if (hum === hums[0]) {
+    } else if (hum === hums[0]) {
         h0_val = hums[0];
         h1_val = hums[0];
-    }
-    // Se h0_val ainda for igual a h1_val (e não é um valor de borda), ajuste h1_val para o próximo
-    else if (h0_val === h1_val && hums.indexOf(h0_val) < hums.length - 1) {
+    } else if (h0_val === h1_val && hums.indexOf(h0_val) < hums.length - 1) {
         h1_val = hums[hums.indexOf(h0_val) + 1];
     }
 
 
-    // Obter os valores WBGT dos 4 pontos da tabela
     const wbgt_t0_h0 = parseFloat(wbgtData[String(t0_val)][String(h0_val)]);
     const wbgt_t0_h1 = parseFloat(wbgtData[String(t0_val)][String(h1_val)]);
     const wbgt_t1_h0 = parseFloat(wbgtData[String(t1_val)][String(h0_val)]);
@@ -289,17 +285,15 @@ function getWbgtValueInterpolated(temp, hum) {
 
     let wbgt_interp;
 
-    if (t0_val === t1_val && h0_val === h1_val) { // Exato match em ambos (não precisa interpolar)
+    if (t0_val === t1_val && h0_val === h1_val) {
         wbgt_interp = wbgt_t0_h0;
-    } else if (t0_val === t1_val) { // Apenas umidade precisa de interpolação (temperatura exata)
+    } else if (t0_val === t1_val) {
         wbgt_interp = interpolate(hum, h0_val, wbgt_t0_h0, h1_val, wbgt_t0_h1);
-    } else if (h0_val === h1_val) { // Apenas temperatura precisa de interpolação (umidade exata)
+    } else if (h0_val === h1_val) {
         wbgt_interp = interpolate(temp, t0_val, wbgt_t0_h0, t1_val, wbgt_t1_h0);
-    } else { // Interpolação bilinear completa
-        // Interpolar primeiro nas temperaturas para cada umidade
+    } else {
         const interpolated_at_h0 = interpolate(temp, t0_val, wbgt_t0_h0, t1_val, wbgt_t1_h0);
         const interpolated_at_h1 = interpolate(temp, t0_val, wbgt_t0_h1, t1_val, wbgt_t1_h1);
-        // Depois interpolar entre as umidades
         wbgt_interp = interpolate(hum, h0_val, interpolated_at_h0, h1_val, interpolated_at_h1);
     }
     
@@ -307,7 +301,6 @@ function getWbgtValueInterpolated(temp, hum) {
     console.log(`DEBUG: WBGTs nos pontos: [${wbgt_t0_h0}, ${wbgt_t0_h1}, ${wbgt_t1_h0}, ${wbgt_t1_h1}]`);
     console.log(`DEBUG: Interpolação resultado bruto: ${wbgt_interp}`);
 
-    // Arredonda o resultado final para o inteiro mais próximo
     return Math.round(wbgt_interp);
 }
 
