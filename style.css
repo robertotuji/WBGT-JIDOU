@@ -53,15 +53,22 @@ button {
     font-weight: bold;
     cursor: pointer;
     color: white; /* Cor da fonte padrão para botões de fundo colorido */
+    transition: background-color 0.3s ease; /* Transição suave para mudança de cor */
 }
 
-/* Estilo específico para o botão de localização */
+/* Estilo padrão para o botão de localização */
 #get-location-weather {
-    background-color: #00aaff; /* Azul para o botão de localização */
-    color: white; /* Cor da fonte branca para o botão azul */
+    background-color: #00aaff; /* Cor azul original */
+    color: white; /* Texto branco */
 }
 
-#calculate, #fetch-weather { /* fetch-weather foi removido do html, mas pode ficar aqui */
+/* NOVO: Estilo para o botão de localização quando está ATIVO/USANDO A GEOLOCALIZAÇÃO */
+#get-location-weather.active {
+    background-color: #28a745; /* Um verde, para indicar sucesso/ativo */
+}
+
+
+#calculate, #fetch-weather {
     background-color: #00aaff;
 }
 
