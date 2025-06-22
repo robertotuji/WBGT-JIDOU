@@ -97,10 +97,7 @@ const translations = {
     }
 };
 
-// ** SUA CHAVE DE API DO OPENWEATHERMAP AQUI **
-// CUIDADO: Esta chave ficará visível no código do navegador.
-// Para um projeto real ou de alto uso, o ideal é usar um backend para escondê-la.
-const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e"; // <-- CHAVE DE API INSERIDA AQUI
+const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e";
 const OPENWEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
 
 
@@ -141,12 +138,12 @@ function hideError() {
 }
 
 async function getGeolocationAndFetchWeather() {
-    hideError();
-    resultBox.classList.add("hidden");
+    hideError(); // Limpa erros anteriores
+    resultBox.classList.add("hidden"); // Esconde resultados anteriores
 
-    if (!OPENWEATHER_API_KEY || OPENWEATHER_API_KEY === "SUA_CHAVE_DE_API_OPENWEATHERMAP_AQUI") {
+    if (!OPENWEATHER_API_KEY || OPENWEATHER_API_KEY === "ef9a9484e8ec68d89092a92a5281841e") { // Validação da chave API
         displayError("Por favor, configure sua chave de API do OpenWeatherMap no script.js.");
-        console.error("API Key não configurada.");
+        console.error("API Key não configurada ou inválida.");
         return;
     }
 
@@ -177,7 +174,7 @@ async function getGeolocationAndFetchWeather() {
             },
             {
                 enableHighAccuracy: true,
-                timeout: 5000,
+                timeout: 10000, // Aumentado o timeout para 10 segundos
                 maximumAge: 0
             }
         );
@@ -319,7 +316,7 @@ function updateLanguage(lang) {
     document.getElementById("get-location-weather").textContent = t.getLocationWeather;
     if (manualLabel) manualLabel.textContent = t.manualLabel;
 
-    hideError();
+    hideError(); // NOVO: Esconde qualquer erro ao mudar o idioma
 }
 
 document.getElementById("language").addEventListener("change", (e) => {
