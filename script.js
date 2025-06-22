@@ -158,7 +158,7 @@ async function getGeolocationAndFetchWeather() {
     }
 
     console.log("Clicado no botão: Tentando obter geolocalização...");
-    getLocationWeatherButton.classList.add('active'); // Mude a cor do botão para ativo
+    getLocationWeatherButton.classList.add('active');
     
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -167,6 +167,8 @@ async function getGeolocationAndFetchWeather() {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 await fetchWeatherDataByCoords(lat, lon);
+                // NOTA: A classe 'active' do botão de localização é mantida até o final do cálculo bem-sucedido
+                // ou removida se houver um erro em fetchWeatherDataByCoords ou calculateWBGT.
             },
             (error) => {
                 const lang = document.getElementById("language").value;
@@ -210,7 +212,6 @@ async function fetchWeatherDataByCoords(lat, lon) {
         console.log("API Response:", data);
 
         if (response.ok) {
-            // Garante que todos os dados necessários estão presentes antes de usar
             if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined && data.name && data.sys && data.sys.country) {
                 const temp = data.main.temp;
                 const humidity = data.main.humidity;
@@ -225,7 +226,9 @@ async function fetchWeatherDataByCoords(lat, lon) {
                 document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
 
-                document.getElementById("calculate").click();
+                document.getElementById("calculate").click(); // Dispara o cálculo do WBGT
+                // A classe 'active' do botão de localização é mantida até o final do cálculo bem-sucedido
+                // ou removida se houver um erro em calculateWBGT.
 
             } else {
                 displayError(translations[document.getElementById("language").value].fetchError);
@@ -396,7 +399,7 @@ document.getElementById("get-location-weather").addEventListener("click", getGeo
 document.getElementById("calculate").addEventListener("click", () => {
     hideError();
     locationDisplay.textContent = ""; // Limpa a localização exibida se o cálculo for manual
-    getLocationWeatherButton.classList.remove('active');
+    getLocationWeatherButton.classList.remove('active'); // Remove o 'active' do botão de localização ao calcular manualmente
 
 
     const temp = parseFloat(document.getElementById("temperature").value);
@@ -462,3 +465,9 @@ window.addEventListener('resize', () => {
             activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    updateLanguage(document.getElementById("language").value);
+});
