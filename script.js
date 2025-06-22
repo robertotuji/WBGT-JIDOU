@@ -1,6 +1,6 @@
 const translations = {
     ja: {
-        title: "WBGTチェッカー（ロケーション）", // Título atualizado
+        title: "WBGTチェッカー（ロケーション）",
         temperature: "気温(°C) 乾球温度:",
         humidity: "湿度 (%):",
         calculate: "計算",
@@ -8,12 +8,13 @@ const translations = {
         dark: "ダークモード",
         invalidInput: "有効な温度と湿度を入力してください。",
         tempOutOfRange: "WBGTテーブルに値が記録されていないため、温度は21°Cから40°Cの間である必要があります。",
-        humOutOfRange: "WBGTテーブルに値が記録されていないため、相対湿度は20%から100%の間で、5刻みである必要があります。",
-        getLocationWeather: "現在の位置の天気を取得", // Nova tradução para o botão
-        locationPermissionDenied: "位置情報へのアクセスが拒否されました。設定で許可してください。", // Nova tradução
-        locationNotAvailable: "位置情報が利用できません。", // Nova tradução
-        locationTimeout: "位置情報の取得がタイムアウトしました。もう一度お試しください。", // Nova tradução
-        fetchError: "気象データの取得中にエラーが発生しました。後でもう一度お試しください。", // Nova tradução
+        humOutOfRange: "WBGTテーブルに値が記録されていないため、相対湿度は20%から100%の間である必要があります。", // Texto da umidade corrigido, removendo "5 em 5"
+        getLocationWeather: "現在の位置の天気を取得",
+        locationPermissionDenied: "位置情報へのアクセスが拒否されました。設定で許可してください。",
+        locationNotAvailable: "位置情報が利用できません。",
+        locationTimeout: "位置情報の取得がタイムアウトしました。もう一度お試しください。",
+        fetchError: "気象データの取得中にエラーが発生しました。後でもう一度お試しください。",
+        manualLabel: "または手動で入力:", // Nova tradução para "Ou insira manualmente"
         levels: [
             "ほぼ安全",
             "注意",
@@ -23,7 +24,7 @@ const translations = {
         ]
     },
     pt: {
-        title: "Verificador WBGT (Localização)", // Título atualizado
+        title: "Verificador WBGT (Localização)",
         temperature: "Temperatura (°C) Temperatura de Bulbo Seco:",
         humidity: "Umidade (%):",
         calculate: "Calcular",
@@ -31,12 +32,13 @@ const translations = {
         dark: "Modo Escuro",
         invalidInput: "Por favor, insira valores válidos para Temperatura e Umidade.",
         tempOutOfRange: "A temperatura deve estar entre 21°C e 40°C, pois fora desses limites não há valores registrados na tabela WBGT.",
-        humOutOfRange: "A umidade relativa deve estar entre 20% e 100%, com intervalos de 5 em 5, pois fora desses limites não há valores registrados na tabela WBGT.",
-        getLocationWeather: "Obter Clima da Localização Atual", // Nova tradução para o botão
-        locationPermissionDenied: "Permissão de localização negada. Por favor, habilite nas configurações do seu dispositivo.", // Nova tradução
-        locationNotAvailable: "Localização não disponível.", // Nova tradução
-        locationTimeout: "Tempo esgotado para obter a localização. Por favor, tente novamente.", // Nova tradução
-        fetchError: "Erro ao buscar dados do clima. Por favor, tente novamente mais tarde.", // Nova tradução
+        humOutOfRange: "A umidade relativa deve estar entre 20% e 100%, pois fora desses limites não há valores registrados na tabela WBGT.", // Texto da umidade corrigido, removendo "5 em 5"
+        getLocationWeather: "Obter Clima da Localização Atual",
+        locationPermissionDenied: "Permissão de localização negada. Por favor, habilite nas configurações do seu dispositivo.",
+        locationNotAvailable: "Localização não disponível.",
+        locationTimeout: "Tempo esgotado para obter a localização. Por favor, tente novamente.",
+        fetchError: "Erro ao buscar dados do clima. Por favor, tente novamente mais tarde.",
+        manualLabel: "Ou insira manualmente:", // Nova tradução para "Ou insira manualmente"
         levels: [
             "Quase Seguro",
             "Atenção",
@@ -46,7 +48,7 @@ const translations = {
         ]
     },
     en: {
-        title: "WBGT Checker (Location)", // Título atualizado
+        title: "WBGT Checker (Location)",
         temperature: "Temperature (°C)Dry Bulb Temperature:",
         humidity: "Humidity (%):",
         calculate: "Calculate",
@@ -54,12 +56,13 @@ const translations = {
         dark: "Dark Mode",
         invalidInput: "Please enter valid Temperature and Humidity values.",
         tempOutOfRange: "Temperature must be between 21°C and 40°C, as there are no recorded values outside these limits in the WBGT table.",
-        humOutOfRange: "Relative humidity must be between 20% and 100%, with intervals of 5, as there are no recorded values outside these limits in the WBGT table.",
-        getLocationWeather: "Get Current Location Weather", // Nova tradução para o botão
-        locationPermissionDenied: "Location permission denied. Please enable in your device settings.", // Nova tradução
-        locationNotAvailable: "Location information not available.", // Nova tradução
-        locationTimeout: "The request to get user location timed out. Please try again.", // Nova tradução
-        fetchError: "Error fetching weather data. Please try again later.", // Nova tradução
+        humOutOfRange: "Relative humidity must be between 20% and 100%, as there are no recorded values outside these limits in the WBGT table.", // Texto da umidade corrigido, removendo "5 em 5"
+        getLocationWeather: "Get Current Location Weather",
+        locationPermissionDenied: "Location permission denied. Please enable in your device settings.",
+        locationNotAvailable: "Location information not available.",
+        locationTimeout: "The request to get user location timed out. Please try again.",
+        fetchError: "Error fetching weather data. Please try again later.",
+        manualLabel: "Or enter manually:", // Nova tradução para "Ou insira manualmente"
         levels: [
             "Almost Safe",
             "Caution",
@@ -69,7 +72,7 @@ const translations = {
         ]
     },
     id: {
-        title: "Pemeriksa WBGT (Lokasi)", // Título atualizado
+        title: "Pemeriksa WBGT (Lokasi)",
         temperature: "Suhu (°C) Suhu Bola Kering:",
         humidity: "Kelembaban (%):",
         calculate: "Hitung",
@@ -77,12 +80,13 @@ const translations = {
         dark: "Mode Gelap",
         invalidInput: "Mohon masukkan nilai Suhu dan Kelembaban yang valid.",
         tempOutOfRange: "Suhu harus antara 21°C dan 40°C, karena tidak ada nilai yang tercatat di luar batas ini dalam tabel WBGT.",
-        humOutOfRange: "Kelembaban relatif harus antara 20% dan 100%, dengan interval 5, karena tidak ada nilai yang tercatat di luar batas ini dalam tabel WBGT.",
-        getLocationWeather: "Dapatkan Cuaca Lokasi Saat Ini", // Nova tradução
-        locationPermissionDenied: "Izin lokasi ditolak. Harap aktifkan di pengaturan perangkat Anda.", // Nova tradução
-        locationNotAvailable: "Informasi lokasi tidak tersedia.", // Nova tradução
-        locationTimeout: "Permintaan untuk mendapatkan lokasi pengguna telah habis waktu. Silakan coba lagi.", // Nova tradução
-        fetchError: "Terjadi kesalahan saat mengambil data cuaca. Silakan coba lagi nanti.", // Nova tradução
+        humOutOfRange: "Kelembaban relatif harus antara 20% dan 100%, karena tidak ada nilai yang tercatat di luar batas ini dalam tabel WBGT.", // Texto da umidade corrigido, removendo "5 em 5"
+        getLocationWeather: "Dapatkan Cuaca Lokasi Saat Ini",
+        locationPermissionDenied: "Izin lokasi ditolak. Harap aktifkan di pengaturan perangkat Anda.",
+        locationNotAvailable: "Informasi lokasi tidak tersedia.",
+        locationTimeout: "Permintaan untuk mendapatkan lokasi pengguna telah habis waktu. Silakan coba lagi.",
+        fetchError: "Terjadi kesalahan saat mengambil data cuaca. Silakan coba lagi nanti.",
+        manualLabel: "Atau masukkan secara manual:", // Nova tradução para "Ou insira manualmente"
         levels: [
             "Hampir Aman",
             "Waspada",
@@ -93,10 +97,7 @@ const translations = {
     }
 };
 
-// ** SUA CHAVE DE API DO OPENWEATHERMAP AQUI **
-// CUIDADO: Esta chave ficará visível no código do navegador.
-// Para um projeto real ou de alto uso, o ideal é usar um backend para escondê-la.
-const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e"; // <-- COLOQUE SUA CHAVE AQUI
+const OPENWEATHER_API_KEY = "SUA_CHAVE_DE_API_OPENWEATHERMAP_AQUI";
 const OPENWEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
 
 
@@ -105,12 +106,12 @@ const result = document.getElementById("result");
 const errorMessageBox = document.getElementById("error-message-box");
 const errorMessage = document.getElementById("error-message");
 const container = document.querySelector('.container');
+const manualLabel = document.getElementById('manual-label'); // Pega o elemento do parágrafo "Ou insira manualmente:"
 
 let wbgtData = {};
 
 async function loadWbgtData() {
     try {
-        // Caminho ajustado para o novo subdiretório do GitHub Pages
         const response = await fetch('/WBGT-JIDOU/wbgt_table_preciso.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -136,10 +137,9 @@ function hideError() {
     errorMessage.innerHTML = "";
 }
 
-// NOVA FUNÇÃO: Obtém a localização do usuário e depois busca o clima
 async function getGeolocationAndFetchWeather() {
-    hideError(); // Limpa erros anteriores
-    resultBox.classList.add("hidden"); // Esconde resultados anteriores
+    hideError();
+    resultBox.classList.add("hidden");
 
     if (!OPENWEATHER_API_KEY || OPENWEATHER_API_KEY === "SUA_CHAVE_DE_API_OPENWEATHERMAP_AQUI") {
         displayError("Por favor, configure sua chave de API do OpenWeatherMap no script.js.");
@@ -152,7 +152,6 @@ async function getGeolocationAndFetchWeather() {
             async (position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
-                // Agora que temos as coordenadas, buscamos o clima
                 await fetchWeatherDataByCoords(lat, lon);
             },
             (error) => {
@@ -184,9 +183,8 @@ async function getGeolocationAndFetchWeather() {
     }
 }
 
-// NOVA FUNÇÃO: Busca dados do clima pela latitude e longitude
 async function fetchWeatherDataByCoords(lat, lon) {
-    const url = `${OPENWEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`; // units=metric para Celsius
+    const url = `${OPENWEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`;
 
     try {
         const response = await fetch(url);
@@ -198,11 +196,10 @@ async function fetchWeatherDataByCoords(lat, lon) {
                 const humidity = data.main.humidity;
 
                 // Preenche os campos de input com os valores da API
-                document.getElementById("temperature").value = temp.toFixed(1); // Arredonda para 1 casa decimal
+                document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
 
-                // Força o cálculo do WBGT com os novos valores
-                document.getElementById("calculate").click(); // Simula o clique no botão calcular
+                document.getElementById("calculate").click();
 
             } else {
                 displayError(translations[document.getElementById("language").value].fetchError);
@@ -218,6 +215,52 @@ async function fetchWeatherDataByCoords(lat, lon) {
     }
 }
 
+// Interpolação Linear para WBGT
+function interpolate(x, x0, y0, x1, y1) {
+    return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
+}
+
+// Função para obter o valor WBGT da tabela com interpolação
+function getWbgtValueInterpolated(temp, hum) {
+    const temps = Object.keys(wbgtData).map(Number).sort((a, b) => a - b);
+    const hums = Object.keys(wbgtData[temps[0]]).map(Number).sort((a, b) => a - b);
+
+    // Encontra os 4 pontos mais próximos na tabela para interpolação bilinear
+    let t0 = temps[0], t1 = temps[0];
+    for (let i = 0; i < temps.length; i++) {
+        if (temps[i] <= temp) t0 = temps[i];
+        if (temps[i] >= temp) { t1 = temps[i]; break; }
+    }
+    if (t0 === t1 && temp > t0) t1 = temps[temps.indexOf(t0) + 1] || t0; // Handle exact match or highest value
+    if (t0 === t1 && temp < t0) t0 = temps[temps.indexOf(t1) - 1] || t1; // Handle exact match or lowest value
+
+
+    let h0 = hums[0], h1 = hums[0];
+    for (let i = 0; i < hums.length; i++) {
+        if (hums[i] <= hum) h0 = hums[i];
+        if (hums[i] >= hum) { h1 = hums[i]; break; }
+    }
+    if (h0 === h1 && hum > h0) h1 = hums[hums.indexOf(h0) + 1] || h0; // Handle exact match or highest value
+    if (h0 === h1 && hum < h0) h0 = hums[hums.indexOf(h1) - 1] || h1; // Handle exact match or lowest value
+
+
+    const wbgt_t0_h0 = wbgtData[String(t0)][String(h0)];
+    const wbgt_t0_h1 = wbgtData[String(t0)][String(h1)];
+    const wbgt_t1_h0 = wbgtData[String(t1)][String(h0)];
+    const wbgt_t1_h1 = wbgtData[String(t1)][String(h1)];
+
+    // Se a temperatura ou umidade for exatamente um valor da tabela ou nos limites
+    if (t0 === t1 && h0 === h1) return wbgt_t0_h0;
+    if (t0 === t1) return interpolate(hum, h0, wbgt_t0_h0, h1, wbgt_t0_h1);
+    if (h0 === h1) return interpolate(temp, t0, wbgt_t0_h0, t1, wbgt_t1_h0);
+
+    // Interpolação bilinear
+    const interpolated_t0 = interpolate(hum, h0, wbgt_t0_h0, h1, wbgt_t0_h1);
+    const interpolated_t1 = interpolate(hum, h0, wbgt_t1_h0, h1, wbgt_t1_h1);
+
+    return Math.round(interpolate(temp, t0, interpolated_t0, t1, interpolated_t1)); // Arredonda o resultado final
+}
+
 
 function calculateWBGT(temp, hum) {
     if (Object.keys(wbgtData).length === 0) {
@@ -225,52 +268,18 @@ function calculateWBGT(temp, hum) {
         return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
     }
 
+    // Validação de limites (sem a regra de "5 em 5" ou "inteiro" para dados em tempo real)
     if (temp < 21 || temp > 40) {
         displayError(translations[document.getElementById("language").value].tempOutOfRange);
         return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
     }
-    if (hum < 20 || hum > 100 || hum % 5 !== 0) {
+    if (hum < 20 || hum > 100) { // Removida a validação "hum % 5 !== 0"
         displayError(translations[document.getElementById("language").value].humOutOfRange);
         return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
     }
 
-    const roundedTemp = Math.round(temp);
-    const roundedHum = Math.round(hum);
-
-    const tempKey = String(roundedTemp);
-    const humKey = String(roundedHum);
-
-    let wbgtValue = null;
-
-    if (wbgtData[tempKey] && wbgtData[tempKey][humKey]) {
-        wbgtValue = wbgtData[tempKey][humKey];
-    } else {
-        const availableTemps = Object.keys(wbgtData).map(Number).sort((a, b) => a - b);
-        let closestTemp = availableTemps.reduce((prev, curr) => (
-            Math.abs(curr - temp) < Math.abs(prev - temp) ? curr : prev
-        ));
-        closestTemp = Math.min(Math.max(closestTemp, 21), 40);
-
-        if (wbgtData[String(closestTemp)]) {
-            const availableHums = Object.keys(wbgtData[String(closestTemp)]).map(Number).sort((a, b) => a - b);
-            let closestHum = availableHums.reduce((prev, curr) => (
-                Math.abs(curr - hum) < Math.abs(prev - hum) ? curr : prev
-            ));
-            closestHum = Math.min(Math.max(closestHum, 20), 100);
-
-            closestHum = Math.round(closestHum / 5) * 5;
-            closestHum = Math.min(Math.max(closestHum, 20), 100);
-
-            if (wbgtData[String(closestTemp)][String(closestHum)]) {
-                 wbgtValue = wbgtData[String(closestTemp)][String(closestHum)];
-                 console.warn(`WBGT: Usando valores aproximados - Temp: ${closestTemp}°C, Hum: ${closestHum}% para Temp: ${temp}°C, Hum: ${hum}%`);
-            } else {
-                 console.error(`Não foi possível encontrar WBGT para temp ${temp} e hum ${hum} mesmo com aproximação.`);
-                 displayError(translations[document.getElementById("language").value].invalidInput);
-                 return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
-            }
-        }
-    }
+    // Usa a nova função de interpolação
+    const wbgtValue = getWbgtValueInterpolated(temp, hum);
 
     if (wbgtValue === null) {
         displayError(translations[document.getElementById("language").value].invalidInput);
@@ -312,12 +321,8 @@ function updateLanguage(lang) {
     document.getElementById("calculate").textContent = t.calculate;
     document.getElementById("clear").textContent = t.clear;
     document.getElementById("dark-label").textContent = t.dark;
-    // NOVO: Atualiza o texto do botão de geolocalização
     document.getElementById("get-location-weather").textContent = t.getLocationWeather;
-    // Remove os elementos de cidade que não existem mais (garante que não haja erro se o JS for executado em HTML antigo)
-    // if (document.getElementById("label-city")) document.getElementById("label-city").textContent = t.cityName;
-    // if (document.getElementById("fetch-weather")) document.getElementById("fetch-weather").textContent = t.fetchWeather;
-    if (document.getElementById("manual-label")) document.getElementById("manual-label").textContent = t["Ou insira manualmente:"] || "Ou insira manualmente:"; // Garante tradução de label manual
+    if (manualLabel) manualLabel.textContent = t.manualLabel; // Atualiza a label "Ou insira manualmente"
 
     hideError();
 }
@@ -330,7 +335,6 @@ document.getElementById("dark-mode").addEventListener("change", () => {
     document.body.classList.toggle("dark-mode");
 });
 
-// NOVO: Event listener para o botão "Obter Clima da Localização Atual"
 document.getElementById("get-location-weather").addEventListener("click", getGeolocationAndFetchWeather);
 
 
@@ -367,16 +371,13 @@ document.getElementById("calculate").addEventListener("click", () => {
 document.getElementById("clear").addEventListener("click", () => {
     document.getElementById("temperature").value = "";
     document.getElementById("humidity").value = "";
-    // if (document.getElementById("city-name")) document.getElementById("city-name").value = ""; // Remove o campo da cidade
     resultBox.classList.add("hidden");
     hideError();
 });
 
-// Lógica para tentar corrigir o desalinhamento ao exibir o teclado virtual (mantida)
 let originalScrollTop = 0;
 let isKeyboardShowing = false;
 
-// Observa o evento de foco nos inputs (agora incluindo type="number" apenas, pois text foi removido)
 document.querySelectorAll('input[type="number"]').forEach(input => {
     input.addEventListener('focus', () => {
         originalScrollTop = window.scrollY || document.documentElement.scrollTop;
