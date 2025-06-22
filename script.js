@@ -15,7 +15,7 @@ const translations = {
         locationTimeout: "位置情報の取得がタイムアウトしました。もう一度お試しください。",
         fetchError: "気象データの取得中にエラーが発生しました。",
         manualLabel: "または手動で入力:",
-        locationDisplayPrefix: "場所:", // Nova tradução
+        locationDisplayPrefix: "場所:",
         levels: [
             "ほぼ安全",
             "注意",
@@ -40,7 +40,7 @@ const translations = {
         locationTimeout: "Tempo esgotado para obter a localização. Por favor, tente novamente.",
         fetchError: "Erro ao buscar dados do clima. Por favor, tente novamente mais tarde.",
         manualLabel: "Ou insira manualmente:",
-        locationDisplayPrefix: "Local:", // Nova tradução
+        locationDisplayPrefix: "Local:",
         levels: [
             "Quase Seguro",
             "Atenção",
@@ -65,7 +65,7 @@ const translations = {
         locationTimeout: "The request to get user location timed out. Please try again.",
         fetchError: "Error fetching weather data. Please try again later.",
         manualLabel: "Or enter manually:",
-        locationDisplayPrefix: "Location:", // Nova tradução
+        locationDisplayPrefix: "Location:",
         levels: [
             "Almost Safe",
             "Caution",
@@ -90,7 +90,6 @@ const translations = {
         locationTimeout: "Permintaan untuk mendapatkan lokasi pengguna telah habis waktu. Silakan coba lagi.",
         fetchError: "Terjadi kesalahan saat mengambil data cuaca.",
         manualLabel: "Atau masukkan secara manual:",
-        locationDisplayPrefix: "Lokasi:", // Nova tradução
         levels: [
             "Hampir Aman",
             "Waspada",
@@ -209,7 +208,7 @@ async function fetchWeatherDataByCoords(lat, lon) {
                 const cityName = data.name;
                 const countryCode = data.sys.country;
 
-                // Exibe a localização
+                // Exibe a localização APENAS SE VIER DA API
                 const lang = document.getElementById("language").value;
                 locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryCode}`;
 
@@ -243,6 +242,7 @@ function getWbgtValueInterpolated(temp, hum) {
 
     temp = Math.max(temps[0], Math.min(temp, temps[temps.length - 1]));
     hum = Math.max(hums[0], Math.min(hum, hums[hums.length - 1]));
+
 
     let t0_val = temps[0];
     let t1_val = temps[temps.length - 1];
@@ -366,7 +366,7 @@ function updateLanguage(lang) {
     document.getElementById("get-location-weather").textContent = t.getLocationWeather;
     if (manualLabel) manualLabel.textContent = t.manualLabel;
 
-    hideError();
+    hideError(); // NOVO: Esconde qualquer erro ao mudar o idioma
 }
 
 document.getElementById("language").addEventListener("change", (e) => {
@@ -382,6 +382,9 @@ document.getElementById("get-location-weather").addEventListener("click", getGeo
 
 document.getElementById("calculate").addEventListener("click", () => {
     hideError();
+    // NOVO: Limpa a localização exibida se o cálculo for manual
+    locationDisplay.textContent = "";
+
     const temp = parseFloat(document.getElementById("temperature").value);
     const hum = parseFloat(document.getElementById("humidity").value);
     const lang = document.getElementById("language").value;
@@ -415,6 +418,7 @@ document.getElementById("clear").addEventListener("click", () => {
     document.getElementById("humidity").value = "";
     resultBox.classList.add("hidden");
     hideError();
+    locationDisplay.textContent = ""; // NOVO: Garante que a localização também seja limpa ao usar o botão Limpar
 });
 
 let originalScrollTop = 0;
