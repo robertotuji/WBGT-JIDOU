@@ -166,7 +166,8 @@ async function getGeolocationAndFetchWeather() {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 await fetchWeatherDataByCoords(lat, lon); // Chama a função para buscar dados da API
-                // A classe 'active' do botão permanecerá se a busca da API for bem-sucedida
+                // A classe 'active' do botão permanecerá se a busca da API for bem-sucedida,
+                // e será removida ao limpar ou calcular manualmente.
             },
             (error) => {
                 const lang = document.getElementById("language").value;
@@ -225,12 +226,13 @@ async function fetchWeatherDataByCoords(lat, lon) {
                 document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
 
-                // Chama calculateWBGT diretamente e processa o resultado
+                // NOVO: Processa o cálculo do WBGT e exibe o resultado diretamente AQUI
                 const { wbgt, levelIdx, color } = calculateWBGT(temp, humidity);
 
                 if (wbgt === null || isNaN(wbgt)) {
                     resultBox.classList.add("hidden");
-                    // displayError já é chamada em calculateWBGT em caso de erro, e ela já remove a classe 'active'.
+                    // displayError já é chamada em calculateWBGT em caso de erro,
+                    // e ela já remove a classe 'active' do botão de localização.
                 } else {
                     const label = translations[lang].levels[levelIdx];
                     resultBox.classList.remove("hidden");
@@ -277,7 +279,7 @@ function getWbgtValueInterpolated(temp, hum) {
     let t1_val = temps[temps.length - 1];
     for (let i = 0; i < temps.length; i++) {
         if (temps[i] <= temp) t0_val = temps[i];
-        else break;
+        if (temps[i] >= temp) { t1_val = temps[i]; break; }
     }
     if (temp === temps[temps.length - 1]) {
         t0_val = temps[temps.length - 1];
