@@ -3,24 +3,20 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>WBGT Checker Manual</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>Verificador WBGT (Localização)</title> <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div class="container">
-        <h1 id="title">WBGT Checker (Manual)</h1>
-        <select id="language">
+        <h1 id="title">Verificador WBGT (Localização)</h1> <select id="language">
             <option value="ja">日本語</option>
             <option value="pt">Português</option>
             <option value="en">English</option>
             <option value="id">Indonesia</option>
         </select>
 
-        <label for="city-name" id="label-city">Nome da Cidade:</label>
-        <input type="text" id="city-name" placeholder="Ex: Tóquio, São Paulo" />
-        <button id="fetch-weather">Buscar Clima Atual</button>
+        <button id="get-location-weather">Obter Clima da Localização Atual</button>
 
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;"> <p style="font-weight: bold;">Ou insira manualmente:</p>
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;"> <p id="manual-label" style="font-weight: bold;">Ou insira manualmente:</p>
 
 
         <label for="temperature" id="label-temp">Temperatura (°C) Temperatura de Bulbo Seco:</label>
@@ -53,8 +49,8 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          // Ajusta o caminho do Service Worker para o subdiretório do GitHub Pages
-          navigator.serviceWorker.register('/wbgt-manual/service-worker.js').then(function(registration) {
+          // Ajusta o caminho do Service Worker para o novo subdiretório
+          navigator.serviceWorker.register('/WBGT-JIDOU/service-worker.js').then(function(registration) {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           }, function(err) {
             console.log('ServiceWorker registration failed: ', err);
