@@ -53,7 +53,7 @@ button {
     font-weight: bold;
     cursor: pointer;
     color: white; /* Cor da fonte padrão para botões de fundo colorido */
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease; /* Transição suave para mudança de cor */
 }
 
 #get-location-weather {
@@ -61,9 +61,10 @@ button {
     color: white; /* Texto branco */
 }
 
-#get-location-weather.active {
-    background-color: #28a745; /* Verde para ativo */
+#get-location-weather.active { /* Estilo para o botão de localização quando está ATIVO */
+    background-color: #28a745; /* Um verde, para indicar sucesso/ativo */
 }
+
 
 #calculate {
     background-color: #00aaff;
@@ -123,6 +124,14 @@ input, select {
 
 
 .switch-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.switch {
   position: relative;
   display: inline-block;
   width: 40px;
