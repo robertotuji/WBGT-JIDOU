@@ -32,37 +32,35 @@ body {
     position: relative;
 }
 
-/* Grupo de botões lado a lado */
+
 .button-group {
     display: flex;
-    gap: 10px; /* Espaço entre os botões */
-    margin: 10px 0; /* Margem do grupo de botões */
+    gap: 10px;
+    margin: 10px 0;
 }
 
 .button-group button {
-    flex: 1; /* Faz com que os botões dividam o espaço igualmente */
-    width: auto; /* Anula o width: 100% para botões dentro do grupo */
-    margin: 0; /* Anula a margem vertical para botões dentro do grupo */
+    flex: 1;
+    width: auto;
+    margin: 0;
 }
 
 button {
-    /* width: 100%; (Removido daqui pois .button-group button já lida com isso) */
     padding: 10px;
     margin: 10px 0;
     border: none;
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    color: white; /* Cor da fonte padrão para botões de fundo colorido */
+    color: white;
 }
 
-/* Cor da fonte do botão "Obter Clima da Localização Atual" */
 #get-location-weather {
-    background-color: #D3D3D3; /* Um cinza claro para o botão */
-    color: black; /* Texto preto para visibilidade */
+    background-color: #D3D3D3;
+    color: black; /* Botão de localização sempre com texto preto */
 }
 
-#calculate {
+#calculate, #fetch-weather {
     background-color: #00aaff;
 }
 
@@ -100,7 +98,7 @@ input, select {
 
 .dark-mode {
     background-color: #1c1c1c;
-    color: white;
+    color: white; /* Cor do texto padrão para o modo escuro */
 }
 
 .dark-mode .container {
@@ -108,9 +106,19 @@ input, select {
     color: white;
 }
 
+/* Regra para texto branco em fundos azuis claros e vermelhos */
 .dark-bg-text-white {
-    color: white;
+    color: white !important; /* Usar !important para garantir a sobreposição */
 }
+
+/* NOVA REGRA: Forçar texto PRETO em fundos AMARELOS e LARANJAS NO MODO ESCURO */
+/* Isso sobrepõe o 'color: white' do .dark-mode para esses elementos específicos */
+.dark-mode #result-box[style*="background-color: rgb(255, 255, 0)"], /* Amarelo */
+.dark-mode #result-box[style*="background-color: rgb(255, 192, 0)"] /* Laranja */
+{
+    color: black !important; /* Força a cor do texto para PRETO */
+}
+
 
 .switch-container {
     display: flex;
