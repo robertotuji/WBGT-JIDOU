@@ -97,7 +97,7 @@ const translations = {
     }
 };
 
-const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e";
+const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e"; // Sua chave de API está aqui
 const OPENWEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
 
 
@@ -141,12 +141,12 @@ async function getGeolocationAndFetchWeather() {
     hideError(); // Limpa erros anteriores
     resultBox.classList.add("hidden"); // Esconde resultados anteriores
 
-    if (!OPENWEATHER_API_KEY || OPENWEATHER_API_KEY === "ef9a9484e8ec68d89092a92a5281841e") { // Validação da chave API
-        displayError("Por favor, configure sua chave de API do OpenWeatherMap no script.js.");
-        console.error("API Key não configurada ou inválida.");
-        return;
-    }
-
+   // Validação APENAS para o placeholder da chave, não para a chave que já está inserida
+if (!OPENWEATHER_API_KEY) { // Apenas verifica se a chave está vazia
+    displayError("Por favor, configure sua chave de API do OpenWeatherMap no script.js.");
+    console.error("API Key não configurada ou inválida.");
+    return;
+}
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -174,7 +174,7 @@ async function getGeolocationAndFetchWeather() {
             },
             {
                 enableHighAccuracy: true,
-                timeout: 10000, // Aumentado o timeout para 10 segundos
+                timeout: 10000,
                 maximumAge: 0
             }
         );
@@ -205,8 +205,10 @@ async function fetchWeatherDataByCoords(lat, lon) {
                 console.error("Dados de temperatura ou umidade não encontrados na resposta da API:", data);
             }
         } else {
-            displayError(translations[document.getElementById("language").value].fetchError);
-            console.error("Erro na resposta da API OpenWeatherMap:", data.message);
+            // Se a resposta da API não for OK, exibe a mensagem de erro.
+            // Erros comuns da API: 401 (API Key inválida), 429 (Limite de requisições excedido)
+            displayError(translations[document.getElementById("language").value].fetchError + ` (Código: ${response.status})`);
+            console.error("Erro na resposta da API OpenWeatherMap:", data.message, "Código:", response.status);
         }
     } catch (error) {
         displayError(translations[document.getElementById("language").value].fetchError);
@@ -316,7 +318,7 @@ function updateLanguage(lang) {
     document.getElementById("get-location-weather").textContent = t.getLocationWeather;
     if (manualLabel) manualLabel.textContent = t.manualLabel;
 
-    hideError(); // NOVO: Esconde qualquer erro ao mudar o idioma
+    hideError();
 }
 
 document.getElementById("language").addEventListener("change", (e) => {
