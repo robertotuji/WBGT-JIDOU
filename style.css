@@ -2,7 +2,7 @@ html, body {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%; /* Garante que html e body ocupem a altura total */
+    height: 100%;
 }
 
 body {
@@ -10,11 +10,11 @@ body {
     background-color: #f4f4f4;
     color: #333;
     display: flex;
-    flex-direction: column; /* Define como coluna para centralizar verticalmente */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Garante que o body ocupe no mínimo a altura da viewport */
-    overflow: hidden; /* Impede a rolagem do body principal */
+    min-height: 100vh;
+    overflow: hidden;
 }
 
 .container {
@@ -25,27 +25,44 @@ body {
     width: 300px;
     text-align: center;
     box-sizing: border-box;
-    /* Ajustes para rolagem interna e altura no celular */
-    flex-shrink: 0; /* Impede que o container encolha além do necessário */
-    max-height: 95vh; /* Permite que o container se ajuste à altura da tela */
-    overflow-y: auto; /* Permite rolagem vertical DENTRO do container */
-    -webkit-overflow-scrolling: touch; /* Melhora a rolagem em iOS */
-    position: relative; /* Pode ajudar no posicionamento relativo se houver elementos fixos */
+    flex-shrink: 0;
+    max-height: 95vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
 }
 
+/* Grupo de botões lado a lado */
+.button-group {
+    display: flex;
+    gap: 10px; /* Espaço entre os botões */
+    margin: 10px 0; /* Margem do grupo de botões */
+}
+
+.button-group button {
+    flex: 1; /* Faz com que os botões dividam o espaço igualmente */
+    width: auto; /* Anula o width: 100% para botões dentro do grupo */
+    margin: 0; /* Anula a margem vertical para botões dentro do grupo */
+}
 
 button {
-    width: 100%;
+    /* width: 100%; (Removido daqui pois .button-group button já lida com isso) */
     padding: 10px;
     margin: 10px 0;
     border: none;
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    color: white;
+    color: white; /* Cor da fonte padrão para botões de fundo colorido */
 }
 
-#calculate, #fetch-weather { /* Adicionado #fetch-weather aqui para o estilo padrão do botão */
+/* Cor da fonte do botão "Obter Clima da Localização Atual" */
+#get-location-weather {
+    background-color: #D3D3D3; /* Um cinza claro para o botão */
+    color: black; /* Texto preto para visibilidade */
+}
+
+#calculate {
     background-color: #00aaff;
 }
 
