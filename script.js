@@ -1,6 +1,6 @@
 const translations = {
     ja: {
-        title: "WBGTチェッカー（手動）",
+        title: "WBGTチェッカー（ロケーション）", // Título atualizado
         temperature: "気温(°C) 乾球温度:",
         humidity: "湿度 (%):",
         calculate: "計算",
@@ -9,9 +9,10 @@ const translations = {
         invalidInput: "有効な温度と湿度を入力してください。",
         tempOutOfRange: "WBGTテーブルに値が記録されていないため、温度は21°Cから40°Cの間である必要があります。",
         humOutOfRange: "WBGTテーブルに値が記録されていないため、相対湿度は20%から100%の間で、5刻みである必要があります。",
-        cityName: "都市名:", // Nova tradução
-        fetchWeather: "現在の気象データを取得", // Nova tradução
-        cityNotFound: "都市が見つかりません。名前を再確認してください。", // Nova tradução
+        getLocationWeather: "現在の位置の天気を取得", // Nova tradução para o botão
+        locationPermissionDenied: "位置情報へのアクセスが拒否されました。設定で許可してください。", // Nova tradução
+        locationNotAvailable: "位置情報が利用できません。", // Nova tradução
+        locationTimeout: "位置情報の取得がタイムアウトしました。もう一度お試しください。", // Nova tradução
         fetchError: "気象データの取得中にエラーが発生しました。後でもう一度お試しください。", // Nova tradução
         levels: [
             "ほぼ安全",
@@ -22,7 +23,7 @@ const translations = {
         ]
     },
     pt: {
-        title: "Verificador WBGT (Manual)",
+        title: "Verificador WBGT (Localização)", // Título atualizado
         temperature: "Temperatura (°C) Temperatura de Bulbo Seco:",
         humidity: "Umidade (%):",
         calculate: "Calcular",
@@ -31,9 +32,10 @@ const translations = {
         invalidInput: "Por favor, insira valores válidos para Temperatura e Umidade.",
         tempOutOfRange: "A temperatura deve estar entre 21°C e 40°C, pois fora desses limites não há valores registrados na tabela WBGT.",
         humOutOfRange: "A umidade relativa deve estar entre 20% e 100%, com intervalos de 5 em 5, pois fora desses limites não há valores registrados na tabela WBGT.",
-        cityName: "Nome da Cidade:", // Nova tradução
-        fetchWeather: "Buscar Clima Atual", // Nova tradução
-        cityNotFound: "Cidade não encontrada. Por favor, verifique o nome.", // Nova tradução
+        getLocationWeather: "Obter Clima da Localização Atual", // Nova tradução para o botão
+        locationPermissionDenied: "Permissão de localização negada. Por favor, habilite nas configurações do seu dispositivo.", // Nova tradução
+        locationNotAvailable: "Localização não disponível.", // Nova tradução
+        locationTimeout: "Tempo esgotado para obter a localização. Por favor, tente novamente.", // Nova tradução
         fetchError: "Erro ao buscar dados do clima. Por favor, tente novamente mais tarde.", // Nova tradução
         levels: [
             "Quase Seguro",
@@ -44,7 +46,7 @@ const translations = {
         ]
     },
     en: {
-        title: "WBGT Checker (Manual)",
+        title: "WBGT Checker (Location)", // Título atualizado
         temperature: "Temperature (°C)Dry Bulb Temperature:",
         humidity: "Humidity (%):",
         calculate: "Calculate",
@@ -53,9 +55,10 @@ const translations = {
         invalidInput: "Please enter valid Temperature and Humidity values.",
         tempOutOfRange: "Temperature must be between 21°C and 40°C, as there are no recorded values outside these limits in the WBGT table.",
         humOutOfRange: "Relative humidity must be between 20% and 100%, with intervals of 5, as there are no recorded values outside these limits in the WBGT table.",
-        cityName: "City Name:", // Nova tradução
-        fetchWeather: "Fetch Current Weather", // Nova tradução
-        cityNotFound: "City not found. Please check the name.", // Nova tradução
+        getLocationWeather: "Get Current Location Weather", // Nova tradução para o botão
+        locationPermissionDenied: "Location permission denied. Please enable in your device settings.", // Nova tradução
+        locationNotAvailable: "Location information not available.", // Nova tradução
+        locationTimeout: "The request to get user location timed out. Please try again.", // Nova tradução
         fetchError: "Error fetching weather data. Please try again later.", // Nova tradução
         levels: [
             "Almost Safe",
@@ -66,7 +69,7 @@ const translations = {
         ]
     },
     id: {
-        title: "Pemeriksa WBGT (Manual)",
+        title: "Pemeriksa WBGT (Lokasi)", // Título atualizado
         temperature: "Suhu (°C) Suhu Bola Kering:",
         humidity: "Kelembaban (%):",
         calculate: "Hitung",
@@ -75,9 +78,10 @@ const translations = {
         invalidInput: "Mohon masukkan nilai Suhu dan Kelembaban yang valid.",
         tempOutOfRange: "Suhu harus antara 21°C dan 40°C, karena tidak ada nilai yang tercatat di luar batas ini dalam tabel WBGT.",
         humOutOfRange: "Kelembaban relatif harus antara 20% dan 100%, dengan interval 5, karena tidak ada nilai yang tercatat di luar batas ini dalam tabel WBGT.",
-        cityName: "Nama Kota:", // Nova tradução
-        fetchWeather: "Ambil Cuaca Saat Ini", // Nova tradução
-        cityNotFound: "Kota tidak ditemukan. Mohon periksa kembali namanya.", // Nova tradução
+        getLocationWeather: "Dapatkan Cuaca Lokasi Saat Ini", // Nova tradução
+        locationPermissionDenied: "Izin lokasi ditolak. Harap aktifkan di pengaturan perangkat Anda.", // Nova tradução
+        locationNotAvailable: "Informasi lokasi tidak tersedia.", // Nova tradução
+        locationTimeout: "Permintaan untuk mendapatkan lokasi pengguna telah habis waktu. Silakan coba lagi.", // Nova tradução
         fetchError: "Terjadi kesalahan saat mengambil data cuaca. Silakan coba lagi nanti.", // Nova tradução
         levels: [
             "Hampir Aman",
@@ -91,7 +95,7 @@ const translations = {
 
 // ** SUA CHAVE DE API DO OPENWEATHERMAP AQUI **
 // CUIDADO: Esta chave ficará visível no código do navegador.
-// Para um projeto real ou de alto uso, o ideal é usar um backend.
+// Para um projeto real ou de alto uso, o ideal é usar um backend para escondê-la.
 const OPENWEATHER_API_KEY = "SUA_CHAVE_DE_API_OPENWEATHERMAP_AQUI"; // <-- COLOQUE SUA CHAVE AQUI
 const OPENWEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
 
@@ -106,7 +110,8 @@ let wbgtData = {};
 
 async function loadWbgtData() {
     try {
-        const response = await fetch('/wbgt-manual/wbgt_table_preciso.json'); // Caminho ajustado para GitHub Pages
+        // Caminho ajustado para o novo subdiretório do GitHub Pages
+        const response = await fetch('/WBGT-JIDOU/wbgt_table_preciso.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -131,22 +136,57 @@ function hideError() {
     errorMessage.innerHTML = "";
 }
 
-// NOVO: Função para buscar dados do clima da API
-async function fetchWeatherData(city) {
+// NOVA FUNÇÃO: Obtém a localização do usuário e depois busca o clima
+async function getGeolocationAndFetchWeather() {
     hideError(); // Limpa erros anteriores
     resultBox.classList.add("hidden"); // Esconde resultados anteriores
 
-    if (!city) {
-        displayError(translations[document.getElementById("language").value].invalidInput);
-        return;
-    }
     if (!OPENWEATHER_API_KEY || OPENWEATHER_API_KEY === "SUA_CHAVE_DE_API_OPENWEATHERMAP_AQUI") {
         displayError("Por favor, configure sua chave de API do OpenWeatherMap no script.js.");
         console.error("API Key não configurada.");
         return;
     }
 
-    const url = `${OPENWEATHER_API_URL}?q=${encodeURIComponent(city)}&appid=${OPENWEATHER_API_KEY}&units=metric`; // units=metric para Celsius
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                // Agora que temos as coordenadas, buscamos o clima
+                await fetchWeatherDataByCoords(lat, lon);
+            },
+            (error) => {
+                const lang = document.getElementById("language").value;
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        displayError(translations[lang].locationPermissionDenied);
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        displayError(translations[lang].locationNotAvailable);
+                        break;
+                    case error.TIMEOUT:
+                        displayError(translations[lang].locationTimeout);
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        displayError(translations[lang].fetchError);
+                        break;
+                }
+                console.error("Erro de geolocalização:", error);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            }
+        );
+    } else {
+        displayError("Seu navegador não suporta geolocalização.");
+    }
+}
+
+// NOVA FUNÇÃO: Busca dados do clima pela latitude e longitude
+async function fetchWeatherDataByCoords(lat, lon) {
+    const url = `${OPENWEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`; // units=metric para Celsius
 
     try {
         const response = await fetch(url);
@@ -169,11 +209,7 @@ async function fetchWeatherData(city) {
                 console.error("Dados de temperatura ou umidade não encontrados na resposta da API:", data);
             }
         } else {
-            if (data.cod === "404") {
-                displayError(translations[document.getElementById("language").value].cityNotFound);
-            } else {
-                displayError(translations[document.getElementById("language").value].fetchError);
-            }
+            displayError(translations[document.getElementById("language").value].fetchError);
             console.error("Erro na resposta da API OpenWeatherMap:", data.message);
         }
     } catch (error) {
@@ -181,6 +217,7 @@ async function fetchWeatherData(city) {
         console.error("Erro ao conectar com a API OpenWeatherMap:", error);
     }
 }
+
 
 function calculateWBGT(temp, hum) {
     if (Object.keys(wbgtData).length === 0) {
@@ -275,9 +312,12 @@ function updateLanguage(lang) {
     document.getElementById("calculate").textContent = t.calculate;
     document.getElementById("clear").textContent = t.clear;
     document.getElementById("dark-label").textContent = t.dark;
-    // NOVO: Atualiza labels de busca de clima
-    document.getElementById("label-city").textContent = t.cityName;
-    document.getElementById("fetch-weather").textContent = t.fetchWeather;
+    // NOVO: Atualiza o texto do botão de geolocalização
+    document.getElementById("get-location-weather").textContent = t.getLocationWeather;
+    // Remove os elementos de cidade que não existem mais (garante que não haja erro se o JS for executado em HTML antigo)
+    // if (document.getElementById("label-city")) document.getElementById("label-city").textContent = t.cityName;
+    // if (document.getElementById("fetch-weather")) document.getElementById("fetch-weather").textContent = t.fetchWeather;
+    if (document.getElementById("manual-label")) document.getElementById("manual-label").textContent = t["Ou insira manualmente:"] || "Ou insira manualmente:"; // Garante tradução de label manual
 
     hideError();
 }
@@ -290,11 +330,9 @@ document.getElementById("dark-mode").addEventListener("change", () => {
     document.body.classList.toggle("dark-mode");
 });
 
-// NOVO: Event listener para o botão "Buscar Clima Atual"
-document.getElementById("fetch-weather").addEventListener("click", () => {
-    const cityName = document.getElementById("city-name").value;
-    fetchWeatherData(cityName);
-});
+// NOVO: Event listener para o botão "Obter Clima da Localização Atual"
+document.getElementById("get-location-weather").addEventListener("click", getGeolocationAndFetchWeather);
+
 
 document.getElementById("calculate").addEventListener("click", () => {
     hideError();
@@ -329,16 +367,17 @@ document.getElementById("calculate").addEventListener("click", () => {
 document.getElementById("clear").addEventListener("click", () => {
     document.getElementById("temperature").value = "";
     document.getElementById("humidity").value = "";
-    document.getElementById("city-name").value = ""; // NOVO: Limpa o campo da cidade
+    // if (document.getElementById("city-name")) document.getElementById("city-name").value = ""; // Remove o campo da cidade
     resultBox.classList.add("hidden");
     hideError();
 });
 
-// NOVA SEÇÃO: Lógica para tentar corrigir o desalinhamento ao exibir o teclado virtual (mesmo código anterior)
+// Lógica para tentar corrigir o desalinhamento ao exibir o teclado virtual (mantida)
 let originalScrollTop = 0;
 let isKeyboardShowing = false;
 
-document.querySelectorAll('input[type="number"], input[type="text"]').forEach(input => { // Inclui input[type="text"]
+// Observa o evento de foco nos inputs (agora incluindo type="number" apenas, pois text foi removido)
+document.querySelectorAll('input[type="number"]').forEach(input => {
     input.addEventListener('focus', () => {
         originalScrollTop = window.scrollY || document.documentElement.scrollTop;
         isKeyboardShowing = true;
