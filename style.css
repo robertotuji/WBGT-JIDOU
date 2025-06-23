@@ -43,6 +43,7 @@ body {
 
 /* Estilos para o subtítulo (Verificador/Checker etc.) */
 #sub-title {
+    display: block;
     font-size: 0.6em;
     font-weight: normal;
     color: #555; /* Cor mais suave */
@@ -138,7 +139,7 @@ button {
     display: none;
 }
 
-/* NOVO: Regras para forçar fundo branco e texto preto nos campos de INPUT e SELECT */
+/* Regras para forçar fundo branco e texto preto nos campos de INPUT e SELECT */
 input, select {
     width: 100%;
     padding: 8px;
