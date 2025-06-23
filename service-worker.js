@@ -1,11 +1,19 @@
-const CACHE_NAME = 'wbgt-checker-cache-v7'; // Versão do cache atualizada novamente
+const CACHE_NAME = 'wbgt-checker-cache-v8'; // Nova versão do cache
 const urlsToCache = [
+  // Arquivos principais e da nova página
   '/WBGT-JIDOU/',
   '/WBGT-JIDOU/index.html',
+  '/WBGT-JIDOU/acoes.html', // <--- NOVO
   '/WBGT-JIDOU/style.css',
-  '/WBGT-JIDOU/script.js',
   '/WBGT-JIDOU/manifest.json',
   '/WBGT-JIDOU/wbgt_table_preciso.json',
+  
+  // Todos os scripts necessários
+  '/WBGT-JIDOU/translations.js', // <--- NOVO
+  '/WBGT-JIDOU/script.js',
+  '/WBGT-JIDOU/actions-script.js', // <--- NOVO
+  
+  // Ícones
   '/WBGT-JIDOU/icons/web-app-manifest-192x192.png',
   '/WBGT-JIDOU/icons/web-app-manifest-512x512.png',
   '/WBGT-JIDOU/icons/apple-touch-icon.png',
