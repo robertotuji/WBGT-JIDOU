@@ -26,8 +26,8 @@ const translations = {
         ]
     },
     pt: {
-        titleMain: "Verificador WBGT", // Parte principal do título
-        titleSub: "(Localização)", // Parte secundária
+        titleMain: "WBGT", // Parte principal do título
+        titleSub: "Verificador (Localização)", // Parte secundária
         temperature: "Temperatura (°C) Temperatura de Bulbo Seco:",
         humidity: "Umidade (%):",
         calculate: "Calcular",
@@ -52,8 +52,8 @@ const translations = {
         ]
     },
     en: {
-        titleMain: "WBGT Checker", // Parte principal do título
-        titleSub: "(Location)", // Parte secundária
+        titleMain: "WBGT", // Parte principal do título
+        titleSub: "Checker (Location)", // Parte secundária
         temperature: "Temperature (°C)Dry Bulb Temperature:",
         humidity: "Humidity (%):",
         calculate: "Calculate",
@@ -117,9 +117,8 @@ const manualLabel = document.getElementById('manual-label');
 const locationDisplay = document.getElementById('location-display');
 const getLocationWeatherButton = document.getElementById('get-location-weather');
 
-// Novos elementos do título
-const titleMain = document.getElementById('title-main');
-const titleSub = document.getElementById('title-sub');
+const titleMainElement = document.getElementById('title-main'); // Elemento WBGT
+const titleSubElement = document.getElementById('title-sub'); // Elemento do subtítulo
 
 
 let wbgtData = {};
@@ -218,6 +217,7 @@ async function fetchWeatherDataByCoords(lat, lon) {
         console.log("API Response:", data);
 
         if (response.ok) {
+            // Garante que todos os dados necessários estão presentes antes de usar
             if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined && data.name && data.sys && data.sys.country) {
                 const temp = data.main.temp;
                 const humidity = data.main.humidity;
