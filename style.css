@@ -33,17 +33,18 @@ body {
 }
 
 /* Estilos para o título principal */
-h1 {
-    font-size: 2em; /* Tamanho da fonte padrão para o H1 */
-    margin-bottom: 0.2em; /* Reduz a margem para ficar mais perto do subtítulo */
-    line-height: 1.2; /* Ajusta a altura da linha */
+#title-main {
+    font-size: 2em; /* Tamanho da fonte para "WBGT" */
+    margin-bottom: 0.2em;
+    line-height: 1.2;
+    display: block; /* Garante que WBGT ocupe sua própria linha */
 }
 
-/* Estilos para a parte secundária do título (menor) */
+/* Estilos para a parte secundária do título (menor e abaixo) */
 #title-sub {
     display: block; /* Garante que fique em uma nova linha */
-    font-size: 0.6em; /* Reduz o tamanho da fonte em relação ao H1 */
-    font-weight: normal; /* Pode ser mais leve */
+    font-size: 0.6em; /* Reduz o tamanho da fonte em relação a WBGT */
+    font-weight: normal;
     color: #555; /* Uma cor um pouco mais suave para o subtítulo */
 }
 
@@ -72,16 +73,16 @@ button {
     font-weight: bold;
     cursor: pointer;
     color: white; /* Cor da fonte padrão para botões de fundo colorido */
-    transition: background-color 0.3s ease; /* Transição suave para mudança de cor */
+    transition: background-color 0.3s ease;
 }
 
 #get-location-weather {
-    background-color: #00aaff; /* Azul original */
-    color: white; /* Texto branco */
+    background-color: #00aaff;
+    color: white;
 }
 
-#get-location-weather.active { /* Estilo para o botão de localização quando está ATIVO */
-    background-color: #28a745; /* Um verde, para indicar sucesso/ativo */
+#get-location-weather.active {
+    background-color: #28a745;
 }
 
 
@@ -135,8 +136,8 @@ input, select {
     color: white !important;
 }
 
-.dark-mode #result-box[style*="background-color: rgb(255, 255, 0)"], /* Amarelo */
-.dark-mode #result-box[style*="background-color: rgb(255, 192, 0)"] /* Laranja */
+.dark-mode #result-box[style*="background-color: rgb(255, 255, 0)"],
+.dark-mode #result-box[style*="background-color: rgb(255, 192, 0)"]
 {
     color: black !important;
 }
