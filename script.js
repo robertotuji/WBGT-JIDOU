@@ -43,7 +43,7 @@ const translations = {
         locationNotAvailable: "Localização não disponível.",
         locationTimeout: "Tempo esgotado para obter a localização. Por favor, tente novamente.",
         fetchError: "Erro ao buscar dados do clima. Por favor, tente novamente mais tarde.",
-        apiKeyNotConfigured: "Por favor, configure sua chave de API da WeatherAPI.com no script.js.",
+        apiKeyNotConfigured: "Por favor, configure sua chave de API da OpenWeatherMap no script.js.",
         manualLabel: "Ou insira manualmente:",
         locationDisplayPrefix: "Local:",
         lastUpdatedPrefix: "Última atualização:",
@@ -71,7 +71,7 @@ const translations = {
         locationNotAvailable: "Location information not available.",
         locationTimeout: "The request to get user location timed out. Please try again.",
         fetchError: "Error fetching weather data. Please try again later.",
-        apiKeyNotConfigured: "Please configure your WeatherAPI.com API key in script.js.",
+        apiKeyNotConfigured: "Please configure your OpenWeatherMap API key in script.js.",
         manualLabel: "Or enter manually:",
         locationDisplayPrefix: "Location:",
         lastUpdatedPrefix: "Last updated:",
@@ -99,7 +99,7 @@ const translations = {
         locationNotAvailable: "Informasi lokasi tidak tersedia.",
         locationTimeout: "Permintaan untuk mendapatkan lokasi pengguna telah habis waktu. Silakan coba lagi.",
         fetchError: "Terjadi kesalahan saat mengambil data cuaca.",
-        apiKeyNotConfigured: "Mohon konfigurasikan kunci API WeatherAPI.com Anda di script.js.",
+        apiKeyNotConfigured: "Mohon konfigurasikan kunci API OpenWeatherMap Anda di script.js.",
         manualLabel: "Atau masukkan secara manual:",
         lastUpdatedPrefix: "Terakhir diperbarui:",
         levels: [
@@ -112,9 +112,10 @@ const translations = {
     }
 };
 
-// ** CHAVE DE API DA WEATHERAPI.COM AQUI **
-const WEATHERAPI_API_KEY = "b16f2d75e23e482a9775429252306"; // Sua chave da WeatherAPI.com
-const WEATHERAPI_API_URL = "https://api.weatherapi.com/v1/current.json"; // URL da WeatherAPI.com
+// ** CHAVE DE API DA OPENWEATHERMAP AQUI **
+const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e
+"; // Sua chave da OpenWeatherMap
+const OPENWEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather"; // URL da OpenWeatherMap
 
 
 const resultBox = document.getElementById("result-box");
@@ -170,15 +171,14 @@ async function getGeolocationAndFetchWeather() {
     hideError(); // Limpa erros e resultados anteriores
     resultBox.classList.add("hidden");
 
-    // Validação da API Key para WeatherAPI.com
-    if (!WEATHERAPI_API_KEY || WEATHERAPI_API_KEY === "b16f2d75e23e482a9775429252306") { // A API Key deve ser sua chave real
+    if (!OPENWEATHER_API_KEY) { // Validação da API Key para OpenWeatherMap
         displayError(translations[document.getElementById("language").value].apiKeyNotConfigured); 
-        console.error("API Key WeatherAPI.com não configurada ou inválida.");
+        console.error("API Key OpenWeatherMap não configurada ou inválida.");
         return;
     }
 
     console.log("Clicado no botão 'Obter Clima da Localização Atual'. Tentando obter geolocalização...");
-    getLocationWeatherButton.classList.add('active'); 
+    getLocationWeatherButton.classList.add('active'); // Define o botão como ativo no início da tentativa
     
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -205,7 +205,7 @@ async function getGeolocationAndFetchWeather() {
                         break;
                 }
                 console.error("Erro de geolocalização:", error);
-                getLocationWeatherButton.classList.remove('active');
+                getLocationWeatherButton.classList.remove('active'); // Remove a classe 'active' em caso de erro
             },
             {
                 enableHighAccuracy: true,
@@ -221,8 +221,8 @@ async function getGeolocationAndFetchWeather() {
 }
 
 async function fetchWeatherDataByCoords(lat, lon) {
-    // ** Chamada à API da WeatherAPI.com **
-    const url = `${WEATHERAPI_API_URL}?key=${WEATHERAPI_API_KEY}&q=${lat},${lon}&aqi=no`;
+    // ** Chamada à API da OpenWeatherMap **
+    const url = `${OPENWEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`; // API da OpenWeatherMap
 
     console.log("Fetching weather from URL:", url);
 
@@ -232,21 +232,22 @@ async function fetchWeatherDataByCoords(lat, lon) {
         console.log("API Response:", data);
 
         if (response.ok) {
-            // ** Extração de dados da WeatherAPI.com **
-            if (data.current && data.current.temp_c !== undefined && data.current.humidity !== undefined && data.location && data.location.name && data.location.country && data.current.last_updated_epoch !== undefined) {
-                const temp = data.current.temp_c; // Temperatura em Celsius
-                const humidity = data.current.humidity; // Umidade
-                const cityName = data.location.name;
-                const countryName = data.location.country; // WeatherAPI.com retorna nome do país, não código
-                const lastUpdated = data.current.last_updated_epoch; // Timestamp da API
+            if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined && data.name && data.sys && data.sys.country && data.dt !== undefined) {
+                const temp = data.main.temp;
+                const humidity = data.main.humidity;
+                const cityName = data.name;
+                const countryCode = data.sys.country;
 
                 const lang = document.getElementById("language").value;
-                if (locationDisplay) locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryName}`;
+                if (locationDisplay) locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryCode}`;
                 
-                const date = new Date(lastUpdated * 1000); // Multiplica por 1000 para ms
+                const date = new Date(data.dt * 1000);
                 const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
                 const formattedTime = date.toLocaleTimeString(document.getElementById("language").value, options);
                 if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = `${translations[lang].lastUpdatedPrefix} ${formattedTime}`;
+
+                console.log(`DEBUG: Localizacao definida na UI: ${cityName}, ${countryCode}`);
+                console.log(`DEBUG: Última atualização definida na UI: ${formattedTime}`);
 
                 document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
@@ -269,21 +270,23 @@ async function fetchWeatherDataByCoords(lat, lon) {
 
             } else {
                 displayError(translations[document.getElementById("language").value].fetchError);
-                console.error("Dados de temperatura/umidade/localização/timestamp não encontrados na resposta da API:", data);
+                console.error("Dados de temperatura/umidade/nome da cidade/timestamp não encontrados na resposta da API:", data);
                 getLocationWeatherButton.classList.remove('active');
             }
         } else {
             let errorMessageText = translations[document.getElementById("language").value].fetchError;
-            if (data.error && data.error.message) { // WeatherAPI.com usa 'error.message' para erros
-                errorMessageText += ` (${data.error.message})`;
+            if (data.message) { // OpenWeatherMap usa 'message' para erros
+                errorMessageText += ` (${data.message})`;
+            } else if (data.cod) {
+                 errorMessageText += ` (Código: ${data.cod})`;
             }
             displayError(errorMessageText);
-            console.error("Erro na resposta da API WeatherAPI.com:", data);
+            console.error("Erro na resposta da API OpenWeatherMap:", data);
             getLocationWeatherButton.classList.remove('active');
         }
     } catch (error) {
         displayError(translations[document.getElementById("language").value].fetchError);
-        console.error("Erro ao conectar com a API WeatherAPI.com:", error);
+        console.error("Erro ao conectar com a API OpenWeatherMap:", error);
         getLocationWeatherButton.classList.remove('active');
     }
 }
@@ -330,190 +333,4 @@ function getWbgtValueInterpolated(temp, hum) {
     } else if (hum === hums[0]) {
         h0_val = hums[0];
         h1_val = hums[0];
-    } else if (h0_val === h1_val && hums.indexOf(h0_val) < hums.length - 1) {
-        h1_val = hums[hums.indexOf(h0_val) + 1];
-    }
-
-
-    const wbgt_t0_h0 = parseFloat(wbgtData[String(t0_val)]?.[String(h0_val)] || 0);
-    const wbgt_t0_h1 = parseFloat(wbgtData[String(t0_val)]?.[String(h1_val)] || 0);
-    const wbgt_t1_h0 = parseFloat(wbgtData[String(t1_val)]?.[String(h0_val)] || 0);
-    const wbgt_t1_h1 = parseFloat(wbgtData[String(t1_val)]?.[String(h1_val)] || 0);
-
-    let wbgt_interp;
-
-    if (t0_val === t1_val && h0_val === h1_val) {
-        wbgt_interp = wbgt_t0_h0;
-    } else if (t0_val === t1_val) {
-        wbgt_interp = interpolate(hum, h0_val, wbgt_t0_h0, h1_val, wbgt_t0_h1);
-    } else if (h0_val === h1_val) {
-        wbgt_interp = interpolate(temp, t0_val, wbgt_t0_h0, t1_val, wbgt_t1_h0);
-    } else {
-        const interpolated_at_h0 = interpolate(temp, t0_val, wbgt_t0_h0, t1_val, wbgt_t1_h0);
-        const interpolated_at_h1 = interpolate(temp, t0_val, wbgt_t0_h1, t1_val, wbgt_t1_h1);
-        wbgt_interp = interpolate(hum, h0_val, interpolated_at_h0, h1_val, interpolated_at_h1);
-    }
-    
-    console.log(`DEBUG: Temp=${temp}, Hum=${hum} -> Pontos: T0=${t0_val}, T1=${t1_val}, H0=${h0_val}, H1=${h1_val}`);
-    console.log(`DEBUG: WBGTs nos pontos: [${wbgt_t0_h0}, ${wbgt_t0_h1}, ${wbgt_t1_h0}, ${wbgt_t1_h1}]`);
-    console.log(`DEBUG: Interpolação resultado bruto: ${wbgt_interp}`);
-
-    return Math.round(wbgt_interp);
-}
-
-
-function calculateWBGT(temp, hum) {
-    if (Object.keys(wbgtData).length === 0) {
-        displayError(translations[document.getElementById("language").value].invalidInput);
-        return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
-    }
-
-    if (temp < 21 || temp > 40) {
-        displayError(translations[document.getElementById("language").value].tempOutOfRange);
-        return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
-    }
-    if (hum < 20 || hum > 100) {
-        displayError(translations[document.getElementById("language").value].humOutOfRange);
-        return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
-    }
-
-    const wbgtValue = getWbgtValueInterpolated(temp, hum);
-
-    if (wbgtValue === null || isNaN(wbgtValue)) {
-        displayError(translations[document.getElementById("language").value].fetchError);
-        console.error("Erro no cálculo do WBGT ou valor é nulo/NaN:", wbgtValue);
-        return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
-    }
-
-    let levelIdx;
-    let color;
-
-    if (wbgtValue >= 31) {
-        levelIdx = 4;
-        color = "#FF0000";
-    }
-    else if (wbgtValue >= 28) {
-        levelIdx = 3;
-        color = "#FFC000";
-    }
-    else if (wbgtValue >= 25) {
-        levelIdx = 2;
-        color = "#FFFF00";
-    }
-    else if (wbgtValue >= 21) {
-        levelIdx = 1;
-        color = "#C5D9F1";
-    }
-    else {
-        levelIdx = 0;
-        color = "#538DD5";
-    }
-
-    return { wbgt: wbgtValue, levelIdx: levelIdx, color: color };
-}
-
-function updateLanguage(lang) {
-    const t = translations[lang];
-    // Ajusta o texto do título em duas partes
-    mainTitleElement.textContent = t.titleMain;
-    subTitleElement.textContent = t.titleSub;
-
-    document.getElementById("label-temp").textContent = t.temperature;
-    document.getElementById("label-humidity").textContent = t.humidity;
-    document.getElementById("calculate").textContent = t.calculate;
-    document.getElementById("clear").textContent = t.clear;
-    document.getElementById("dark-label").textContent = t.dark;
-    document.getElementById("get-location-weather").textContent = t.getLocationWeather;
-    if (manualLabel) manualLabel.textContent = t.manualLabel;
-
-    hideError();
-}
-
-document.getElementById("language").addEventListener("change", (e) => {
-    updateLanguage(e.target.value);
-});
-
-document.getElementById("dark-mode").addEventListener("change", () => {
-    document.body.classList.toggle("dark-mode");
-});
-
-document.getElementById("get-location-weather").addEventListener("click", getGeolocationAndFetchWeather);
-
-
-document.getElementById("calculate").addEventListener("click", () => {
-    hideError();
-    if (locationDisplay) locationDisplay.textContent = ""; // Limpa a localização exibida se o cálculo for manual
-    if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = ""; // Limpa a atualização se o cálculo for manual
-    getLocationWeatherButton.classList.remove('active'); // Remove o 'active' do botão de localização ao calcular manualmente
-
-
-    const temp = parseFloat(document.getElementById("temperature").value);
-    const hum = parseFloat(document.getElementById("humidity").value);
-    const lang = document.getElementById("language").value;
-
-    if (isNaN(temp) || isNaN(hum)) {
-        displayError(translations[lang].invalidInput);
-        return;
-    }
-
-    const { wbgt, levelIdx, color } = calculateWBGT(temp, hum);
-
-    if (wbgt === null || isNaN(wbgt)) {
-        resultBox.classList.add("hidden");
-        return;
-    }
-
-    const label = translations[lang].levels[levelIdx];
-
-    resultBox.classList.remove("hidden");
-    resultBox.style.backgroundColor = color;
-    if (color === "#538DD5" || color === "#FF0000") {
-        result.style.color = "white"; 
-    } else {
-        result.style.color = "black";
-    }
-    result.innerHTML = `WBGT: ${wbgt}°C<br><strong>${label}</strong>`;
-});
-
-document.getElementById("clear").addEventListener("click", () => {
-    document.getElementById("temperature").value = "";
-    document.getElementById("humidity").value = "";
-    resultBox.classList.add("hidden");
-    hideError();
-    if (locationDisplay) locationDisplay.textContent = "";
-    if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = "";
-    getLocationWeatherButton.classList.remove('active');
-});
-
-let originalScrollTop = 0;
-let isKeyboardShowing = false;
-
-document.querySelectorAll('input[type="number"]').forEach(input => {
-    input.addEventListener('focus', () => {
-        originalScrollTop = window.scrollY || document.documentElement.scrollTop;
-        isKeyboardShowing = true;
-        setTimeout(() => {
-            if (isKeyboardShowing) {
-                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }, 100);
-    });
-
-    input.addEventListener('blur', () => {
-        isKeyboardShowing = false;
-    });
-});
-
-window.addEventListener('resize', () => {
-    if (isKeyboardShowing) {
-        const activeElement = document.activeElement;
-        if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'SELECT')) {
-            activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    }
-});
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    updateLanguage(document.getElementById("language").value);
-});
+    } else if (h0_val === h1
