@@ -1,0 +1,102 @@
+const translations = {
+    ja: {
+        title: "WBGT",
+        title_sub: "チェッカー",
+        temperature: "気温(°C) 乾球温度:",
+        humidity: "湿度 (%):",
+        calculate: "計算",
+        clear: "クリア",
+        dark: "ダークモード",
+        getLocationWeather: "現在の位置の天気を取得",
+        manualLabel: "または手動で入力:",
+        locationDisplayPrefix: "場所:",
+        levels: [ "ほぼ安全", "注意", "警戒", "厳重警戒", "危険" ],
+        viewActions: "推奨される対策を見る",
+        // Textos do Popup Rápido
+        popupBriefTitle: "WBGTとは？",
+        popupBriefText: "WBGT（湿球黒球温度）は、気温、湿度、日射、風を考慮した熱ストレス指標です。熱中症のリスクを正確に評価するために重要です。",
+        // Textos da Página de Ações Detalhadas
+        actionsPageTitle: "推奨される対策",
+        actionsLevel0: "<strong>ほぼ安全 (21°C未満):</strong> 通常の活動が可能です。リスクは低いですが、長時間の活動では水分補給を忘れないでください。",
+        actionsLevel1: "<strong>注意 (21°C〜25°C):</strong> 意識的に水分と塩分を補給してください。定期的に日陰で休憩を取ることをお勧めします。",
+        actionsLevel2: "<strong>警戒 (25°C〜28°C):</strong> 激しい運動は30分おきに休憩を取ってください。積極的に水分を補給し、体調の変化に注意してください。",
+        actionsLevel3: "<strong>厳重警戒 (28°C〜31°C):</strong> 激しい運動は避けるべきです。特に暑さに慣れていない方は、軽い活動に留めてください。涼しい場所で頻繁に休憩を取ってください。",
+        actionsLevel4: "<strong>危険 (31°C以上):</strong> 原則として運動は中止してください。熱中症の危険性が非常に高いです。涼しい室内で過ごし、体調が悪い場合はすぐに医療機関に相談してください。",
+        backButton: "戻る"
+    },
+    pt: {
+        title: "WBGT",
+        title_sub: "Verificação",
+        temperature: "Temperatura (°C) Temperatura de Bulbo Seco:",
+        humidity: "Umidade (%):",
+        calculate: "Calcular",
+        clear: "Limpar",
+        dark: "Modo Escuro",
+        getLocationWeather: "Obter Clima da Localização Atual",
+        manualLabel: "Ou insira manualmente:",
+        locationDisplayPrefix: "Local:",
+        levels: [ "Quase Seguro", "Atenção", "Alerta", "Alerta Máximo", "Perigo" ],
+        viewActions: "Ver ações recomendadas",
+        // Textos do Popup Rápido
+        popupBriefTitle: "O que é WBGT?",
+        popupBriefText: "O WBGT (Índice de Bulbo Úmido e Globo) é uma medida de estresse térmico que avalia o risco real de insolação ao considerar temperatura, umidade, vento e radiação solar.",
+        // Textos da Página de Ações Detalhadas
+        actionsPageTitle: "Ações Recomendadas",
+        actionsLevel0: "<strong>Quase Seguro (Abaixo de 21°C):</strong> Risco baixo. Atividades normais permitidas. Lembre-se de se hidratar em atividades prolongadas.",
+        actionsLevel1: "<strong>Atenção (21°C a 25°C):</strong> Aumente a ingestão de água. Monitore sinais de cansaço e faça pausas na sombra periodicamente.",
+        actionsLevel2: "<strong>Alerta (25°C a 28°C):</strong> Limite atividades intensas e faça pausas de 15 minutos a cada hora de atividade. A hidratação é crucial.",
+        actionsLevel3: "<strong>Alerta Máximo (28°C a 31°C):</strong> Risco alto. Evite atividades físicas intensas. Se o trabalho for essencial, adote pausas longas e frequentes em locais frescos. Monitore a si mesmo e aos outros.",
+        actionsLevel4: "<strong>Perigo (Acima de 31°C):</strong> Risco extremo. Cancele ou adie todas as atividades físicas não essenciais. Permaneça em ambientes climatizados. O risco de problemas de saúde relacionados ao calor é muito alto.",
+        backButton: "Voltar"
+    },
+    en: {
+        title: "WBGT",
+        title_sub: "Checker",
+        temperature: "Temperature (°C)Dry Bulb Temperature:",
+        humidity: "Humidity (%):",
+        calculate: "Calculate",
+        clear: "Clear",
+        dark: "Dark Mode",
+        getLocationWeather: "Get Current Location Weather",
+        manualLabel: "Or enter manually:",
+        locationDisplayPrefix: "Location:",
+        levels: [ "Almost Safe", "Caution", "Warning", "High Alert", "Danger" ],
+        viewActions: "View recommended actions",
+        // Textos do Popup Rápido
+        popupBriefTitle: "What is WBGT?",
+        popupBriefText: "The Wet Bulb Globe Temperature (WBGT) is a heat stress index that measures the true risk of heat-related illness by considering temperature, humidity, wind, and solar radiation.",
+        // Textos da Página de Ações Detalhadas
+        actionsPageTitle: "Recommended Actions",
+        actionsLevel0: "<strong>Almost Safe (Below 21°C):</strong> Low risk. Normal activities are permitted. Remember to hydrate during prolonged activities.",
+        actionsLevel1: "<strong>Caution (21°C to 25°C):</strong> Increase water intake. Monitor for signs of fatigue and take periodic breaks in the shade.",
+        actionsLevel2: "<strong>Warning (25°C to 28°C):</strong> Limit intense activities and take 15-minute breaks every hour. Hydration is crucial.",
+        actionsLevel3: "<strong>High Alert (28°C to 31°C):</strong> High risk. Avoid intense physical activities. If work is essential, adopt long and frequent breaks in cool places. Monitor yourself and others.",
+        actionsLevel4: "<strong>Danger (Above 31°C):</strong> Extreme risk. Cancel or postpone all non-essential physical activities. Stay in air-conditioned environments. The risk of heat-related health problems is very high.",
+        backButton: "Back"
+    },
+    id: {
+        title: "WBGT",
+        title_sub: "Pemeriksa",
+        temperature: "Suhu (°C) Suhu Bola Kering:",
+        humidity: "Kelembaban (%):",
+        calculate: "Hitung",
+        clear: "Bersihkan",
+        dark: "Mode Gelap",
+        getLocationWeather: "Dapatkan Cuaca Lokasi Saat Ini",
+        manualLabel: "Atau masukkan secara manual:",
+        locationDisplayPrefix: "Lokasi:",
+        levels: [ "Hampir Aman", "Waspada", "Siaga", "Siaga Tinggi", "Bahaya" ],
+        viewActions: "Lihat tindakan yang direkomendasikan",
+        // Textos do Popup Rápido
+        popupBriefTitle: "Apa itu WBGT?",
+        popupBriefText: "Suhu Bola Basah Globe (WBGT) adalah indeks stres panas yang mengukur risiko sebenarnya dari penyakit terkait panas dengan mempertimbangkan suhu, kelembaban, angin, dan radiasi matahari.",
+        // Textos da Página de Ações Detalhadas
+        actionsPageTitle: "Tindakan yang Direkomendasikan",
+        actionsLevel0: "<strong>Hampir Aman (Di bawah 21°C):</strong> Risiko rendah. Aktivitas normal diizinkan. Ingatlah untuk terhidrasi selama aktivitas yang berkepanjangan.",
+        actionsLevel1: "<strong>Waspada (21°C hingga 25°C):</strong> Tingkatkan asupan air. Pantau tanda-tanda kelelahan dan istirahat secara berkala di tempat teduh.",
+        actionsLevel2: "<strong>Siaga (25°C hingga 28°C):</strong> Batasi aktivitas intens dan istirahat selama 15 menit setiap jam. Hidrasi sangat penting.",
+        actionsLevel3: "<strong>Siaga Tinggi (28°C hingga 31°C):</strong> Risiko tinggi. Hindari aktivitas fisik yang intens. Jika pekerjaan penting, ambil istirahat panjang dan sering di tempat sejuk. Pantau diri sendiri dan orang lain.",
+        actionsLevel4: "<strong>Bahaya (Di atas 31°C):</strong> Risiko ekstrem. Batalkan atau tunda semua aktivitas fisik yang tidak penting. Tetap di lingkungan ber-AC. Risiko masalah kesehatan terkait panas sangat tinggi.",
+        backButton: "Kembali"
+    }
+};
