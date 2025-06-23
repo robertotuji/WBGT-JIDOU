@@ -4,19 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Verificador WBGT</title>
-    
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="manifest.json">
-    
     <meta name="theme-color" content="#00aaff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="WBGT Local">
-
     <link rel="icon" href="icons/favicon.ico" sizes="any">
     <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-
 </head>
 <body>
     <div class="container">
@@ -25,38 +21,30 @@
             <span id="title-sub"></span>
             <button id="info-button">?</button>
         </div>
-
         <select id="language">
             <option value="ja">日本語</option>
             <option value="pt">Português</option>
             <option value="en">English</option>
             <option value="id">Indonesia</option>
         </select>
-
         <button id="get-location-weather">Obter Clima da Localização Atual</button>
         <div id="location-display" style="margin-top: 10px; font-weight: bold;"></div>
         <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
         <p id="manual-label" style="font-weight: bold;">Ou insira manualmente:</p>
-
         <label for="temperature" id="label-temp">Temperatura (°C) Temperatura de Bulbo Seco:</label>
         <input type="number" id="temperature" />
-
         <label for="humidity" id="label-humidity">Umidade (%):</label>
         <input type="number" id="humidity" />
-
         <div class="button-group">
             <button id="calculate">Calcular</button>
             <button id="clear">Limpar</button>
         </div>
-
         <div id="result-box" class="hidden">
             <div id="result"></div>
         </div>
-
         <div id="error-message-box" class="hidden error-box">
             <div id="error-message"></div>
         </div>
-
         <label class="switch-container">
             <span id="dark-label">Modo Escuro</span>
             <label class="switch">
@@ -65,7 +53,6 @@
             </label>
         </label>
     </div>
-
     <div id="info-popup" class="popup-overlay hidden">
         <div class="popup-content">
             <button class="popup-close-btn">&times;</button>
@@ -73,10 +60,8 @@
             <p id="popup-text-brief"></p>
         </div>
     </div>
-    
     <script src="translations.js"></script>
     <script src="script.js"></script>
-    
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
