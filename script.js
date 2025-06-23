@@ -173,9 +173,7 @@ async function getGeolocationAndFetchWeather() {
                 console.log("Geolocalização obtida:", position.coords.latitude, position.coords.longitude);
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
-                await fetchWeatherDataByCoords(lat, lon); // Chama a função para buscar dados da API
-                // A classe 'active' do botão permanecerá se a busca da API for bem-sucedida,
-                // e será removida ao limpar ou calcular manualmente.
+                await fetchWeatherDataByCoords(lat, lon);
             },
             (error) => {
                 const lang = document.getElementById("language").value;
@@ -219,7 +217,6 @@ async function fetchWeatherDataByCoords(lat, lon) {
         console.log("API Response:", data);
 
         if (response.ok) {
-            // Garante que todos os dados necessários estão presentes antes de usar
             if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined && data.name && data.sys && data.sys.country) {
                 const temp = data.main.temp;
                 const humidity = data.main.humidity;
