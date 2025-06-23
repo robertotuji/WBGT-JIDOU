@@ -1,7 +1,7 @@
 const translations = {
     ja: {
-        titleMain: "WBGT",
-        titleSub: "チェッカー（ロケーション）",
+        titleMain: "WBGT", // Parte principal do título
+        titleSub: "チェッカー（ロケーション）", // Parte secundária
         temperature: "気温(°C) 乾球温度:",
         humidity: "湿度 (%):",
         calculate: "計算",
@@ -17,6 +17,7 @@ const translations = {
         fetchError: "気象データの取得中にエラーが発生しました。",
         manualLabel: "または手動で入力:",
         locationDisplayPrefix: "場所:",
+        lastUpdatedPrefix: "最終更新:",
         levels: [
             "ほぼ安全",
             "注意",
@@ -26,8 +27,8 @@ const translations = {
         ]
     },
     pt: {
-        titleMain: "WBGT",
-        titleSub: "Verificador (Localização)",
+        titleMain: "WBGT", // Parte principal do título
+        titleSub: "Verificador (Localização)", // Parte secundária
         temperature: "Temperatura (°C) Temperatura de Bulbo Seco:",
         humidity: "Umidade (%):",
         calculate: "Calcular",
@@ -43,6 +44,7 @@ const translations = {
         fetchError: "Erro ao buscar dados do clima. Por favor, tente novamente mais tarde.",
         manualLabel: "Ou insira manualmente:",
         locationDisplayPrefix: "Local:",
+        lastUpdatedPrefix: "Última atualização:",
         levels: [
             "Quase Seguro",
             "Atenção",
@@ -52,8 +54,8 @@ const translations = {
         ]
     },
     en: {
-        titleMain: "WBGT",
-        titleSub: "Checker (Location)",
+        titleMain: "WBGT", // Parte principal do título
+        titleSub: "Checker (Location)", // Parte secundária
         temperature: "Temperature (°C)Dry Bulb Temperature:",
         humidity: "Humidity (%):",
         calculate: "Calculate",
@@ -69,6 +71,7 @@ const translations = {
         fetchError: "Error fetching weather data. Please try again later.",
         manualLabel: "Or enter manually:",
         locationDisplayPrefix: "Location:",
+        lastUpdatedPrefix: "Last updated:",
         levels: [
             "Almost Safe",
             "Caution",
@@ -78,8 +81,8 @@ const translations = {
         ]
     },
     id: {
-        titleMain: "WBGT",
-        titleSub: "Pemeriksa (Lokasi)",
+        titleMain: "WBGT", // Parte principal do título
+        titleSub: "Pemeriksa (Lokasi)", // Parte secundária
         temperature: "Suhu (°C) Suhu Bola Kering:",
         humidity: "Kelembaban (%):",
         calculate: "Hitung",
@@ -94,6 +97,7 @@ const translations = {
         locationTimeout: "Permintaan untuk mendapatkan lokasi pengguna telah habis waktu. Silakan coba lagi.",
         fetchError: "Terjadi kesalahan saat mengambil data cuaca.",
         manualLabel: "Atau masukkan secara manual:",
+        lastUpdatedPrefix: "Terakhir diperbarui:",
         levels: [
             "Hampir Aman",
             "Waspada",
@@ -115,6 +119,7 @@ const errorMessage = document.getElementById("error-message");
 const container = document.querySelector('.container');
 const manualLabel = document.getElementById('manual-label');
 const locationDisplay = document.getElementById('location-display');
+const lastUpdatedDisplay = document.getElementById('last-updated-display');
 const getLocationWeatherButton = document.getElementById('get-location-weather');
 
 const mainTitleElement = document.getElementById('main-title'); 
@@ -142,6 +147,7 @@ loadWbgtData();
 function displayError(message) {
     resultBox.classList.add("hidden");
     locationDisplay.textContent = "";
+    lastUpdatedDisplay.textContent = "";
     getLocationWeatherButton.classList.remove('active');
     errorMessageBox.classList.remove("hidden");
     errorMessage.innerHTML = message;
@@ -151,6 +157,7 @@ function hideError() {
     errorMessageBox.classList.add("hidden");
     errorMessage.innerHTML = "";
     locationDisplay.textContent = "";
+    lastUpdatedDisplay.textContent = "";
     getLocationWeatherButton.classList.remove('active');
 }
 
@@ -217,7 +224,7 @@ async function fetchWeatherDataByCoords(lat, lon) {
         console.log("API Response:", data);
 
         if (response.ok) {
-            if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined && data.name && data.sys && data.sys.country) {
+            if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined && data.name && data.sys && data.sys.country && data.dt !== undefined) {
                 const temp = data.main.temp;
                 const humidity = data.main.humidity;
                 const cityName = data.name;
@@ -226,6 +233,11 @@ async function fetchWeatherDataByCoords(lat, lon) {
                 const lang = document.getElementById("language").value;
                 locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryCode}`;
                 console.log(`DEBUG: Localizacao definida na UI: ${cityName}, ${countryCode}`);
+
+                const date = new Date(data.dt * 1000);
+                const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+                const formattedTime = date.toLocaleTimeString(document.getElementById("language").value, options);
+                lastUpdatedDisplay.textContent = `${translations[lang].lastUpdatedPrefix} ${formattedTime}`;
 
                 document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
@@ -238,10 +250,9 @@ async function fetchWeatherDataByCoords(lat, lon) {
                     const label = translations[lang].levels[levelIdx];
                     resultBox.classList.remove("hidden");
                     resultBox.style.backgroundColor = color;
-                    // NOVO: Define a cor do texto do resultado diretamente aqui
-                    if (color === "#538DD5" || color === "#FF0000") { // Azul Claro (Quase Seguro) ou Vermelho (Perigo)
+                    if (color === "#538DD5" || color === "#FF0000") {
                         result.style.color = "white"; 
-                    } else { // Outras cores (Azul Mais Claro, Amarelo, Laranja)
+                    } else {
                         result.style.color = "black";
                     }
                     result.innerHTML = `WBGT: ${wbgt}°C<br><strong>${label}</strong>`;
@@ -249,7 +260,7 @@ async function fetchWeatherDataByCoords(lat, lon) {
 
             } else {
                 displayError(translations[document.getElementById("language").value].fetchError);
-                console.error("Dados de temperatura/umidade/nome da cidade não encontrados na resposta da API:", data);
+                console.error("Dados de temperatura/umidade/nome da cidade/timestamp não encontrados na resposta da API:", data);
                 getLocationWeatherButton.classList.remove('active');
             }
         } else {
@@ -391,8 +402,8 @@ function calculateWBGT(temp, hum) {
 function updateLanguage(lang) {
     const t = translations[lang];
     // Ajusta o texto do título em duas partes
-    mainTitleElement.textContent = t.titleMain; // Define o texto do H1
-    subTitleElement.textContent = t.titleSub; // Define o texto do H2
+    mainTitleElement.textContent = t.titleMain;
+    subTitleElement.textContent = t.titleSub;
 
     document.getElementById("label-temp").textContent = t.temperature;
     document.getElementById("label-humidity").textContent = t.humidity;
@@ -419,6 +430,7 @@ document.getElementById("get-location-weather").addEventListener("click", getGeo
 document.getElementById("calculate").addEventListener("click", () => {
     hideError();
     locationDisplay.textContent = ""; // Limpa a localização exibida se o cálculo for manual
+    lastUpdatedDisplay.textContent = ""; // Limpa a atualização se o cálculo for manual
     getLocationWeatherButton.classList.remove('active'); // Remove o 'active' do botão de localização ao calcular manualmente
 
 
@@ -442,10 +454,9 @@ document.getElementById("calculate").addEventListener("click", () => {
 
     resultBox.classList.remove("hidden");
     resultBox.style.backgroundColor = color;
-    // NOVO: Define a cor do texto do resultado diretamente aqui
-    if (color === "#538DD5" || color === "#FF0000") { // Azul Claro (Quase Seguro) ou Vermelho (Perigo)
+    if (color === "#538DD5" || color === "#FF0000") {
         result.style.color = "white"; 
-    } else { // Outras cores (Azul Mais Claro, Amarelo, Laranja)
+    } else {
         result.style.color = "black";
     }
     result.innerHTML = `WBGT: ${wbgt}°C<br><strong>${label}</strong>`;
@@ -457,6 +468,7 @@ document.getElementById("clear").addEventListener("click", () => {
     resultBox.classList.add("hidden");
     hideError();
     locationDisplay.textContent = "";
+    lastUpdatedDisplay.textContent = ""; // Limpa a última atualização
     getLocationWeatherButton.classList.remove('active');
 });
 
