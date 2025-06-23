@@ -152,7 +152,7 @@ input, select {
     padding: 8px;
     margin: 5px 0 15px 0;
     box-sizing: border-box;
-    border-radius: 5px; /* Adicionando um leve arredondamento */
+    border-radius: 5px;
     border: 1px solid #ccc;
 }
 
@@ -294,10 +294,10 @@ input:checked + .slider:before {
     text-decoration: none;
 }
 
-/* --- NOVA REGRA PARA CORRIGIR O BUG DO MODO ESCURO --- */
+/* --- REGRA AGRESSIVA PARA CORRIGIR O BUG DO MODO ESCURO --- */
 .dark-mode input,
 .dark-mode select {
-    background-color: #ffffff; /* Força o fundo a ser branco */
-    color: #000000;             /* Força o texto a ser preto para garantir a leitura */
-    border: 1px solid #888;    /* Adiciona uma borda para melhor contraste */
+    background-color: #ffffff !important; /* Força o fundo a ser branco */
+    color: #000000 !important;             /* Força o texto a ser preto */
+    border: 1px solid #888 !important;    /* Força a borda para contraste */
 }
