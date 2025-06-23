@@ -88,6 +88,5 @@ input:checked + .slider:before { transform: translateX(20px); }
     color: inherit; text-decoration: underline; font-weight: bold; cursor: pointer;
 }
 .button-link-result:hover { text-decoration: none; }
-.dark-mode input, .dark-mode select {
-    color: #ffffff !important;
-}
+
+/* A REGRA PROBLEMÁTICA PARA O TABLET FOI REMOVIDA DESTA VERSÃO FINAL */
