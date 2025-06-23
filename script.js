@@ -1,68 +1,57 @@
-const translations = {
-    ja: {
-        title: "WBGT",
-        title_sub: "チェッカー",
-        temperature: "気温(°C) 乾球温度:",
-        humidity: "湿度 (%):",
-        calculate: "計算",
-        clear: "クリア",
-        dark: "ダークモード",
-        invalidInput: "有効な温度と湿度を入力してください。",
-        tempOutOfRange: "WBGTテーブルに値が記録されていないため、温度は21°Cから40°Cの間である必要があります。",
-        humOutOfRange: "WBGTテーブルに値が記録されていないため、相対湿度は20%から100%の間である必要があります。",
-        getLocationWeather: "現在の位置の天気を取得",
-        locationPermissionDenied: "位置情報へのアクセスが拒否されました。設定で許可してください。",
-        locationNotAvailable: "位置情報が利用できません。",
-        locationTimeout: "位置情報の取得がタイムアウトしました。もう一度お試しください。",
-        fetchError: "気象データの取得中にエラーが発生しました。",
-        manualLabel: "または手動で入力:",
-        locationDisplayPrefix: "場所:",
-        levels: [
-            "ほぼ安全",
-            "注意",
-            "警戒",
-            "厳重警戒",
-            "危険"
-        ]
-    },
-    pt: {
-        title: "WBGT",
-        title_sub: "Verificação",
-        temperature: "Temperatura (°C) Temperatura de Bulbo Seco:",
-        humidity: "Umidade (%):",
-        calculate: "Calcular",
-        clear: "Limpar",
-        dark: "Modo Escuro",
-        invalidInput: "Por favor, insira valores válidos para Temperatura e Umidade.",
-        tempOutOfRange: "A temperatura deve estar entre 21°C e 40°C, pois fora desses limites não há valores registrados na tabela WBGT.",
-        humOutOfRange: "A umidade relativa deve estar entre 20% e 100%, pois fora desses limites não há valores registrados na tabela WBGT.",
-        getLocationWeather: "Obter Clima da Localização Atual",
-        locationPermissionDenied: "Permissão de localização negada. Por favor, habilite nas configurações do seu dispositivo.",
-        locationNotAvailable: "Localização não disponível.",
-        locationTimeout: "Tempo esgotado para obter a localização. Por favor, tente novamente.",
-        fetchError: "Erro ao buscar dados do clima. Por favor, tente novamente mais tarde.",
-        manualLabel: "Ou insira manualmente:",
-        locationDisplayPrefix: "Local:",
-        levels: [
-            "Quase Seguro",
-            "Atenção",
-            "Alerta",
-            "Alerta Máximo",
-            "Perigo"
-        ]
-    },
-    en: {
-        title: "WBGT",
-        title_sub: "Checker",
-        temperature: "Temperature (°C)Dry Bulb Temperature:",
-        humidity: "Humidity (%):",
-        calculate: "Calculate",
-        clear: "Clear",
-        dark: "Dark Mode",
-        invalidInput: "Please enter valid Temperature and Humidity values.",
-        tempOutOfRange: "Temperature must be between 21°C and 40°C, as there are no recorded values outside these limits in the WBGT table.",
-        humOutOfRange: "Relative humidity must be between 20% and 100%, as there are no recorded values outside these limits in the WBGT table.",
-        getLocationWeather: "Get Current Location Weather",
-        locationPermissionDenied: "Location permission denied. Please enable in your device settings.",
-        locationNotAvailable: "Location information not available.",
-        locationTimeout:
+const CACHE_NAME = 'wbgt-checker-cache-v7'; // Versão do cache atualizada novamente
+const urlsToCache = [
+  '/WBGT-JIDOU/',
+  '/WBGT-JIDOU/index.html',
+  '/WBGT-JIDOU/style.css',
+  '/WBGT-JIDOU/script.js',
+  '/WBGT-JIDOU/manifest.json',
+  '/WBGT-JIDOU/wbgt_table_preciso.json',
+  '/WBGT-JIDOU/icons/web-app-manifest-192x192.png',
+  '/WBGT-JIDOU/icons/web-app-manifest-512x512.png',
+  '/WBGT-JIDOU/icons/apple-touch-icon.png',
+  '/WBGT-JIDOU/icons/favicon.ico',
+  '/WBGT-JIDOU/icons/favicon.svg'
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
+      .catch(error => {
+        console.error('Failed to cache during install:', error);
+      })
+  );
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      })
+      .catch(error => {
+        console.error('Fetch failed:', error);
+      })
+  );
+});
+
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
