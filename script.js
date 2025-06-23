@@ -1,6 +1,7 @@
 const translations = {
     ja: {
-        title: "WBGTチェッカー（ロケーション）",
+        titleMain: "WBGT", // Parte principal do título
+        titleSub: "チェッカー（ロケーション）", // Parte secundária
         temperature: "気温(°C) 乾球温度:",
         humidity: "湿度 (%):",
         calculate: "計算",
@@ -25,7 +26,8 @@ const translations = {
         ]
     },
     pt: {
-        title: "Verificador WBGT (Localização)",
+        titleMain: "Verificador WBGT", // Parte principal do título
+        titleSub: "(Localização)", // Parte secundária
         temperature: "Temperatura (°C) Temperatura de Bulbo Seco:",
         humidity: "Umidade (%):",
         calculate: "Calcular",
@@ -50,7 +52,8 @@ const translations = {
         ]
     },
     en: {
-        title: "WBGT Checker (Location)",
+        titleMain: "WBGT Checker", // Parte principal do título
+        titleSub: "(Location)", // Parte secundária
         temperature: "Temperature (°C)Dry Bulb Temperature:",
         humidity: "Humidity (%):",
         calculate: "Calculate",
@@ -75,7 +78,8 @@ const translations = {
         ]
     },
     id: {
-        title: "Pemeriksa WBGT (Lokasi)",
+        titleMain: "Pemeriksa WBGT", // Parte principal do título
+        titleSub: "(Lokasi)", // Parte secundária
         temperature: "Suhu (°C) Suhu Bola Kering:",
         humidity: "Kelembaban (%):",
         calculate: "Hitung",
@@ -112,6 +116,11 @@ const container = document.querySelector('.container');
 const manualLabel = document.getElementById('manual-label');
 const locationDisplay = document.getElementById('location-display');
 const getLocationWeatherButton = document.getElementById('get-location-weather');
+
+// Novos elementos do título
+const titleMain = document.getElementById('title-main');
+const titleSub = document.getElementById('title-sub');
+
 
 let wbgtData = {};
 
@@ -165,9 +174,7 @@ async function getGeolocationAndFetchWeather() {
                 console.log("Geolocalização obtida:", position.coords.latitude, position.coords.longitude);
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
-                await fetchWeatherDataByCoords(lat, lon); // Chama a função para buscar dados da API
-                // A classe 'active' do botão permanecerá se a busca da API for bem-sucedida,
-                // e será removida ao limpar ou calcular manualmente.
+                await fetchWeatherDataByCoords(lat, lon);
             },
             (error) => {
                 const lang = document.getElementById("language").value;
@@ -211,14 +218,12 @@ async function fetchWeatherDataByCoords(lat, lon) {
         console.log("API Response:", data);
 
         if (response.ok) {
-            // Garante que todos os dados necessários estão presentes antes de usar
             if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined && data.name && data.sys && data.sys.country) {
                 const temp = data.main.temp;
                 const humidity = data.main.humidity;
                 const cityName = data.name;
                 const countryCode = data.sys.country;
 
-                // **CRÍTICO: Exibe a localização na interface**
                 const lang = document.getElementById("language").value;
                 locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryCode}`;
                 console.log(`DEBUG: Localizacao definida na UI: ${cityName}, ${countryCode}`);
@@ -226,13 +231,10 @@ async function fetchWeatherDataByCoords(lat, lon) {
                 document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
 
-                // NOVO: Processa o cálculo do WBGT e exibe o resultado diretamente AQUI
                 const { wbgt, levelIdx, color } = calculateWBGT(temp, humidity);
 
                 if (wbgt === null || isNaN(wbgt)) {
                     resultBox.classList.add("hidden");
-                    // displayError já é chamada em calculateWBGT em caso de erro,
-                    // e ela já remove a classe 'active' do botão de localização.
                 } else {
                     const label = translations[lang].levels[levelIdx];
                     resultBox.classList.remove("hidden");
@@ -279,7 +281,7 @@ function getWbgtValueInterpolated(temp, hum) {
     let t1_val = temps[temps.length - 1];
     for (let i = 0; i < temps.length; i++) {
         if (temps[i] <= temp) t0_val = temps[i];
-        if (temps[i] >= temp) { t1_val = temps[i]; break; }
+        else break;
     }
     if (temp === temps[temps.length - 1]) {
         t0_val = temps[temps.length - 1];
@@ -388,7 +390,10 @@ function calculateWBGT(temp, hum) {
 
 function updateLanguage(lang) {
     const t = translations[lang];
-    document.getElementById("title").textContent = t.title;
+    // Ajusta o texto do título em duas partes
+    document.getElementById("title-main").textContent = t.titleMain;
+    document.getElementById("title-sub").textContent = t.titleSub;
+
     document.getElementById("label-temp").textContent = t.temperature;
     document.getElementById("label-humidity").textContent = t.humidity;
     document.getElementById("calculate").textContent = t.calculate;
