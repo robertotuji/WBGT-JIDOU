@@ -1,7 +1,7 @@
 const translations = {
     ja: {
-        titleMain: "WBGT", // Parte principal do título
-        titleSub: "チェッカー（ロケーション）", // Parte secundária
+        titleMain: "WBGT",
+        titleSub: "チェッカー（ロケーション）",
         temperature: "気温(°C) 乾球温度:",
         humidity: "湿度 (%):",
         calculate: "計算",
@@ -27,8 +27,8 @@ const translations = {
         ]
     },
     pt: {
-        titleMain: "WBGT", // Parte principal do título
-        titleSub: "Verificador (Localização)", // Parte secundária
+        titleMain: "WBGT",
+        titleSub: "Verificador (Localização)",
         temperature: "Temperatura (°C) Temperatura de Bulbo Seco:",
         humidity: "Umidade (%):",
         calculate: "Calcular",
@@ -54,8 +54,8 @@ const translations = {
         ]
     },
     en: {
-        titleMain: "WBGT", // Parte principal do título
-        titleSub: "Checker (Location)", // Parte secundária
+        titleMain: "WBGT",
+        titleSub: "Checker (Location)",
         temperature: "Temperature (°C)Dry Bulb Temperature:",
         humidity: "Humidity (%):",
         calculate: "Calculate",
@@ -81,8 +81,8 @@ const translations = {
         ]
     },
     id: {
-        titleMain: "WBGT", // Parte principal do título
-        titleSub: "Pemeriksa (Lokasi)", // Parte secundária
+        titleMain: "WBGT",
+        titleSub: "Pemeriksa (Lokasi)",
         temperature: "Suhu (°C) Suhu Bola Kering:",
         humidity: "Kelembaban (%):",
         calculate: "Hitung",
@@ -108,8 +108,9 @@ const translations = {
     }
 };
 
-const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e";
-const OPENWEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
+// ** CHAVE DE API DA WEATHERAPI.COM AQUI **
+const WEATHERAPI_API_KEY = "b16f2d75e23e482a9775429252306"; // Sua chave da WeatherAPI.com
+const WEATHERAPI_API_URL = "https://api.weatherapi.com/v1/current.json";
 
 
 const resultBox = document.getElementById("result-box");
@@ -119,7 +120,7 @@ const errorMessage = document.getElementById("error-message");
 const container = document.querySelector('.container');
 const manualLabel = document.getElementById('manual-label');
 const locationDisplay = document.getElementById('location-display');
-const lastUpdatedDisplay = document.getElementById('last-updated-display');
+const lastUpdatedDisplay = document.getElementById('last-updated-display'); // Elemento para a última atualização
 const getLocationWeatherButton = document.getElementById('get-location-weather');
 
 const mainTitleElement = document.getElementById('main-title'); 
@@ -146,8 +147,9 @@ loadWbgtData();
 
 function displayError(message) {
     resultBox.classList.add("hidden");
-    locationDisplay.textContent = "";
-    lastUpdatedDisplay.textContent = "";
+    // Protegendo contra 'null' antes de tentar usar textContent
+    if (locationDisplay) locationDisplay.textContent = "";
+    if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = "";
     getLocationWeatherButton.classList.remove('active');
     errorMessageBox.classList.remove("hidden");
     errorMessage.innerHTML = message;
@@ -156,8 +158,9 @@ function displayError(message) {
 function hideError() {
     errorMessageBox.classList.add("hidden");
     errorMessage.innerHTML = "";
-    locationDisplay.textContent = "";
-    lastUpdatedDisplay.textContent = "";
+    // Protegendo contra 'null' antes de tentar usar textContent
+    if (locationDisplay) locationDisplay.textContent = "";
+    if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = "";
     getLocationWeatherButton.classList.remove('active');
 }
 
@@ -165,8 +168,8 @@ async function getGeolocationAndFetchWeather() {
     hideError(); // Limpa erros e resultados anteriores
     resultBox.classList.add("hidden");
 
-    if (!OPENWEATHER_API_KEY) {
-        displayError("Por favor, configure sua chave de API do OpenWeatherMap no script.js.");
+    if (!WEATHERAPI_API_KEY) { // Usando a nova chave aqui
+        displayError("Por favor, configure sua chave de API da WeatherAPI.com no script.js.");
         console.error("API Key não configurada ou inválida.");
         return;
     }
@@ -215,7 +218,8 @@ async function getGeolocationAndFetchWeather() {
 }
 
 async function fetchWeatherDataByCoords(lat, lon) {
-    const url = `${OPENWEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`;
+    const url = `${WEATHERAPI_API_URL}?key=${WEATHERAPI_API_KEY}&q=${lat},${lon}&aqi=no`;
+
     console.log("Fetching weather from URL:", url);
 
     try {
@@ -224,20 +228,23 @@ async function fetchWeatherDataByCoords(lat, lon) {
         console.log("API Response:", data);
 
         if (response.ok) {
-            if (data.main && data.main.temp !== undefined && data.main.humidity !== undefined && data.name && data.sys && data.sys.country && data.dt !== undefined) {
-                const temp = data.main.temp;
-                const humidity = data.main.humidity;
-                const cityName = data.name;
-                const countryCode = data.sys.country;
-
-                const lang = document.getElementById("language").value;
-                locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryCode}`;
-                console.log(`DEBUG: Localizacao definida na UI: ${cityName}, ${countryCode}`);
-
-                const date = new Date(data.dt * 1000);
+            if (data.current && data.current.temp_c !== undefined && data.current.humidity !== undefined && data.location && data.location.name && data.location.country) {
+                const temp = data.current.temp_c;
+                const humidity = data.current.humidity;
+                const cityName = data.location.name;
+                const countryName = data.location.country;
+                const lastUpdated = data.current.last_updated_epoch;
+                
+                const date = new Date(lastUpdated * 1000);
                 const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
                 const formattedTime = date.toLocaleTimeString(document.getElementById("language").value, options);
-                lastUpdatedDisplay.textContent = `${translations[lang].lastUpdatedPrefix} ${formattedTime}`;
+                
+                const lang = document.getElementById("language").value;
+                if (locationDisplay) locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryName}`;
+                if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = `${translations[lang].lastUpdatedPrefix} ${formattedTime}`;
+
+                console.log(`DEBUG: Localizacao definida na UI: ${cityName}, ${countryName}`);
+                console.log(`DEBUG: Última atualização definida na UI: ${formattedTime}`);
 
                 document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
@@ -260,17 +267,21 @@ async function fetchWeatherDataByCoords(lat, lon) {
 
             } else {
                 displayError(translations[document.getElementById("language").value].fetchError);
-                console.error("Dados de temperatura/umidade/nome da cidade/timestamp não encontrados na resposta da API:", data);
+                console.error("Dados de temperatura/umidade/localização não encontrados na resposta da API:", data);
                 getLocationWeatherButton.classList.remove('active');
             }
         } else {
-            displayError(translations[document.getElementById("language").value].fetchError + ` (Código: ${response.status})`);
-            console.error("Erro na resposta da API OpenWeatherMap:", data.message, "Código:", response.status);
+            let errorMessageText = translations[document.getElementById("language").value].fetchError;
+            if (data.error && data.error.message) {
+                errorMessageText += ` (${data.error.message})`;
+            }
+            displayError(errorMessageText);
+            console.error("Erro na resposta da API WeatherAPI.com:", data);
             getLocationWeatherButton.classList.remove('active');
         }
     } catch (error) {
         displayError(translations[document.getElementById("language").value].fetchError);
-        console.error("Erro ao conectar com a API OpenWeatherMap:", error);
+        console.error("Erro ao conectar com a API WeatherAPI.com:", error);
         getLocationWeatherButton.classList.remove('active');
     }
 }
