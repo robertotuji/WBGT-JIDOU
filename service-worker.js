@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wbgt-checker-cache-v6'; // Versão do cache atualizada
+const CACHE_NAME = 'wbgt-checker-cache-v7'; // Versão do cache atualizada novamente
 const urlsToCache = [
   '/WBGT-JIDOU/',
   '/WBGT-JIDOU/index.html',
