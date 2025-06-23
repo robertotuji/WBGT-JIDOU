@@ -1,7 +1,7 @@
 const translations = {
     ja: {
-        titleMain: "WBGT", // Parte principal do título
-        titleSub: "チェッカー（ロケーション）", // Parte secundária
+        titleMain: "WBGT",
+        titleSub: "チェッカー（ロケーション）",
         temperature: "気温(°C) 乾球温度:",
         humidity: "湿度 (%):",
         calculate: "計算",
@@ -26,8 +26,8 @@ const translations = {
         ]
     },
     pt: {
-        titleMain: "WBGT", // Parte principal do título
-        titleSub: "Verificador (Localização)", // Parte secundária
+        titleMain: "WBGT",
+        titleSub: "Verificador (Localização)",
         temperature: "Temperatura (°C) Temperatura de Bulbo Seco:",
         humidity: "Umidade (%):",
         calculate: "Calcular",
@@ -52,8 +52,8 @@ const translations = {
         ]
     },
     en: {
-        titleMain: "WBGT", // Parte principal do título
-        titleSub: "Checker (Location)", // Parte secundária
+        titleMain: "WBGT",
+        titleSub: "Checker (Location)",
         temperature: "Temperature (°C)Dry Bulb Temperature:",
         humidity: "Humidity (%):",
         calculate: "Calculate",
@@ -78,8 +78,8 @@ const translations = {
         ]
     },
     id: {
-        titleMain: "WBGT", // Parte principal do título
-        titleSub: "Pemeriksa (Lokasi)", // Parte secundária
+        titleMain: "WBGT",
+        titleSub: "Pemeriksa (Lokasi)",
         temperature: "Suhu (°C) Suhu Bola Kering:",
         humidity: "Kelembaban (%):",
         calculate: "Hitung",
@@ -117,7 +117,6 @@ const manualLabel = document.getElementById('manual-label');
 const locationDisplay = document.getElementById('location-display');
 const getLocationWeatherButton = document.getElementById('get-location-weather');
 
-// Elementos do título agora são pegos aqui
 const mainTitleElement = document.getElementById('main-title'); 
 const subTitleElement = document.getElementById('sub-title');
 
@@ -239,10 +238,11 @@ async function fetchWeatherDataByCoords(lat, lon) {
                     const label = translations[lang].levels[levelIdx];
                     resultBox.classList.remove("hidden");
                     resultBox.style.backgroundColor = color;
-                    if (color === "#538DD5" || color === "#FF0000") {
-                        resultBox.classList.add("dark-bg-text-white");
-                    } else {
-                        resultBox.classList.remove("dark-bg-text-white");
+                    // NOVO: Define a cor do texto do resultado diretamente aqui
+                    if (color === "#538DD5" || color === "#FF0000") { // Azul Claro (Quase Seguro) ou Vermelho (Perigo)
+                        result.style.color = "white"; 
+                    } else { // Outras cores (Azul Mais Claro, Amarelo, Laranja)
+                        result.style.color = "black";
                     }
                     result.innerHTML = `WBGT: ${wbgt}°C<br><strong>${label}</strong>`;
                 }
@@ -442,10 +442,11 @@ document.getElementById("calculate").addEventListener("click", () => {
 
     resultBox.classList.remove("hidden");
     resultBox.style.backgroundColor = color;
-    if (color === "#538DD5" || color === "#FF0000") {
-        resultBox.classList.add("dark-bg-text-white");
-    } else {
-        resultBox.classList.remove("dark-bg-text-white");
+    // NOVO: Define a cor do texto do resultado diretamente aqui
+    if (color === "#538DD5" || color === "#FF0000") { // Azul Claro (Quase Seguro) ou Vermelho (Perigo)
+        result.style.color = "white"; 
+    } else { // Outras cores (Azul Mais Claro, Amarelo, Laranja)
+        result.style.color = "black";
     }
     result.innerHTML = `WBGT: ${wbgt}°C<br><strong>${label}</strong>`;
 });
