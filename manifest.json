@@ -1,21 +1,37 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "Verificador WBGT (Localização)",
+  "short_name": "WBGT Local",
+  "description": "Aplicativo para verificar o WBGT (Wet-Bulb Globe Temperature) de sua localização atual.",
+  "start_url": "/WBGT-JIDOU/",
+  "display": "standalone",
+  "background_color": "#f4f4f4",
+  "theme_color": "#00aaff",
   "icons": [
     {
-      "src": "/web-app-manifest-192x192.png",
+      "src": "/WBGT-JIDOU/icons/android-chrome-192x192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
+      "type": "image/png"
     },
     {
-      "src": "/web-app-manifest-512x512.png",
+      "src": "/WBGT-JIDOU/icons/android-chrome-512x512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "type": "image/png"
+    },
+    {
+      "src": "/WBGT-JIDOU/icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/WBGT-JIDOU/icons/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/WBGT-JIDOU/icons/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "orientation": "portrait"
 }
