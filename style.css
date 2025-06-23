@@ -43,7 +43,6 @@ body {
 
 /* Estilos para o subtítulo (Verificador/Checker etc.) */
 #sub-title {
-    display: block;
     font-size: 0.6em;
     font-weight: normal;
     color: #555; /* Cor mais suave */
