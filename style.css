@@ -32,6 +32,25 @@ body {
     position: relative;
 }
 
+/* Estilos para o título principal */
+h1 {
+    font-size: 2em; /* Tamanho da fonte padrão para o H1 */
+    margin-bottom: 0.2em; /* Reduz a margem para ficar mais perto do subtítulo */
+    line-height: 1.2; /* Ajusta a altura da linha */
+}
+
+/* Estilos para a parte secundária do título (menor) */
+#title-sub {
+    display: block; /* Garante que fique em uma nova linha */
+    font-size: 0.6em; /* Reduz o tamanho da fonte em relação ao H1 */
+    font-weight: normal; /* Pode ser mais leve */
+    color: #555; /* Uma cor um pouco mais suave para o subtítulo */
+}
+
+.dark-mode #title-sub {
+    color: #bbb; /* Cor mais clara para o subtítulo no modo escuro */
+}
+
 
 .button-group {
     display: flex;
