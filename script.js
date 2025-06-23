@@ -283,7 +283,7 @@ function getWbgtValueInterpolated(temp, hum) {
     let t1_val = temps[temps.length - 1];
     for (let i = 0; i < temps.length; i++) {
         if (temps[i] <= temp) t0_val = temps[i];
-        else break;
+        if (temps[i] >= temp) { t1_val = temps[i]; break; }
     }
     if (temp === temps[temps.length - 1]) {
         t0_val = temps[temps.length - 1];
@@ -393,8 +393,8 @@ function calculateWBGT(temp, hum) {
 function updateLanguage(lang) {
     const t = translations[lang];
     // Ajusta o texto do título em duas partes
-    titleMainElement.textContent = t.titleMain; // Usa o elemento H1
-    titleSubElement.textContent = t.titleSub; // Usa o elemento SPAN
+    titleMainElement.textContent = t.titleMain;
+    titleSubElement.textContent = t.titleSub;
 
     document.getElementById("label-temp").textContent = t.temperature;
     document.getElementById("label-humidity").textContent = t.humidity;
