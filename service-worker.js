@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wbgt-checker-cache-v5'; // <--- AQUI! MUDADO PARA V5 PARA FORÇAR ATUALIZAÇÃO
+const CACHE_NAME = 'wbgt-checker-cache-v5'; // <--- CACHE_NAME atualizado
 const urlsToCache = [
   '/WBGT-JIDOU/',
   '/WBGT-JIDOU/index.html',
