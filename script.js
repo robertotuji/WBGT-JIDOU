@@ -1,62 +1,32 @@
-// --- LÓGICA PRINCIPAL DA PÁGINA DA CALCULADORA (index.html) ---
-
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ELEMENTOS DA PÁGINA ---
     const languageSelect = document.getElementById('language');
     const darkModeToggle = document.getElementById('dark-mode');
-    const resultBox = document.getElementById("result-box");
-    const resultDiv = document.getElementById("result");
-    const locationDisplay = document.getElementById('location-display');
-    const getLocationWeatherButton = document.getElementById('get-location-weather');
-
-    // --- CARREGAMENTO INICIAL ---
-    
-    // Carrega a tabela de dados WBGT
     loadWbgtData();
-    
-    // Aplica o idioma salvo ou o padrão
     const savedLang = localStorage.getItem('wbgt-lang') || 'pt';
     languageSelect.value = savedLang;
     updateLanguage(savedLang);
     document.documentElement.lang = savedLang;
-
-    // Aplica o modo escuro salvo
     const darkModeSaved = localStorage.getItem('wbgt-dark-mode') === 'true';
     darkModeToggle.checked = darkModeSaved;
     if (darkModeSaved) {
         document.body.classList.add('dark-mode');
     }
-
-    // --- EVENT LISTENERS (QUEM FAZ AS COISAS ACONTECEREM) ---
-
-    // Muda o idioma
     languageSelect.addEventListener("change", (e) => {
         const newLang = e.target.value;
-        localStorage.setItem('wbgt-lang', newLang); // Salva a escolha
+        localStorage.setItem('wbgt-lang', newLang);
         updateLanguage(newLang);
     });
-
-    // Ativa/desativa o modo escuro
     darkModeToggle.addEventListener("change", () => {
         const isDarkMode = darkModeToggle.checked;
         document.body.classList.toggle("dark-mode", isDarkMode);
-        localStorage.setItem('wbgt-dark-mode', isDarkMode); // Salva a escolha
+        localStorage.setItem('wbgt-dark-mode', isDarkMode);
     });
-
-    // Botão para obter clima pela localização
-    getLocationWeatherButton.addEventListener("click", getGeolocationAndFetchWeather);
-
-    // Botão de Calcular Manual
+    document.getElementById('get-location-weather').addEventListener("click", getGeolocationAndFetchWeather);
     document.getElementById("calculate").addEventListener("click", handleCalculation);
-    
-    // Botão de Limpar
     document.getElementById("clear").addEventListener("click", clearAll);
-
-    // Lógica do Popup de Informação Rápida
     const infoButton = document.getElementById('info-button');
     const infoPopup = document.getElementById('info-popup');
     const popupCloseButton = document.querySelector('.popup-close-btn');
-
     infoButton.addEventListener('click', () => {
         const currentLang = localStorage.getItem('wbgt-lang') || 'pt';
         const t = translations[currentLang];
@@ -64,28 +34,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('popup-text-brief').textContent = t.popupBriefText;
         infoPopup.classList.remove('hidden');
     });
-
     popupCloseButton.addEventListener('click', () => {
         infoPopup.classList.add('hidden');
     });
-
     infoPopup.addEventListener('click', (event) => {
-        // Fecha o popup se o clique for no fundo cinza (o overlay)
         if (event.target === infoPopup) {
             infoPopup.classList.add('hidden');
         }
     });
 });
-
-
-// --- DEFINIÇÕES E CONSTANTES GLOBAIS ---
 let wbgtData = {};
 const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e";
 const OPENWEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
-
-
-// --- FUNÇÕES PRINCIPAIS ---
-
 async function loadWbgtData() {
     try {
         const response = await fetch('/WBGT-JIDOU/wbgt_table_preciso.json');
@@ -95,7 +55,6 @@ async function loadWbgtData() {
         console.error("Erro ao carregar os dados WBGT:", error);
     }
 }
-
 function updateLanguage(lang) {
     const t = translations[lang];
     document.getElementById("title-main").textContent = t.title;
@@ -108,47 +67,32 @@ function updateLanguage(lang) {
     document.getElementById("get-location-weather").textContent = t.getLocationWeather;
     if (document.getElementById('manual-label')) document.getElementById('manual-label').textContent = t.manualLabel;
 }
-
 function handleCalculation() {
-    // Esconde erros antigos
     document.getElementById("error-message-box").classList.add("hidden");
-
-    // Se o cálculo foi manual, limpa a localização
     if (document.activeElement.id !== "get-location-weather") {
         document.getElementById('location-display').textContent = "";
         document.getElementById('get-location-weather').classList.remove('active');
     }
-    
     const temp = parseFloat(document.getElementById("temperature").value);
     const hum = parseFloat(document.getElementById("humidity").value);
     const lang = localStorage.getItem('wbgt-lang') || 'pt';
-    
     if (isNaN(temp) || isNaN(hum)) {
         displayError(translations[lang].invalidInput);
         return;
     }
-
     const resultData = calculateWBGT(temp, hum);
-
     if (resultData.error) {
         displayError(resultData.error);
         return;
     }
-    
     displayResult(resultData, lang);
 }
-
 function displayResult(resultData, lang) {
     const resultBox = document.getElementById("result-box");
     const resultDiv = document.getElementById("result");
     const t = translations[lang];
-
-    // Cria o link para a página de ações
     const actionsLink = `<a href="acoes.html?level=${resultData.levelIdx}" class="button-link-result">${t.viewActions}</a>`;
-
-    // Monta o HTML do resultado
     resultDiv.innerHTML = `WBGT: ${resultData.wbgt}°C<br><strong>${resultData.label}</strong><div style="margin-top:10px;">${actionsLink}</div>`;
-    
     resultBox.style.backgroundColor = resultData.color;
     resultBox.classList.remove("text-light", "text-dark");
     if (resultData.color === "#538DD5" || resultData.color === "#FF0000") {
@@ -158,7 +102,6 @@ function displayResult(resultData, lang) {
     }
     resultBox.classList.remove("hidden");
 }
-
 function clearAll() {
     document.getElementById("temperature").value = "";
     document.getElementById("humidity").value = "";
@@ -167,21 +110,15 @@ function clearAll() {
     document.getElementById("location-display").textContent = "";
     document.getElementById('get-location-weather').classList.remove('active');
 }
-
 function displayError(message) {
     const errorBox = document.getElementById("error-message-box");
     errorBox.textContent = message;
     errorBox.classList.remove("hidden");
     document.getElementById("result-box").classList.add("hidden");
 }
-
-
-// --- LÓGICA DE GEOLOCALIZAÇÃO E API ---
-
 async function getGeolocationAndFetchWeather() {
-    clearAll(); // Limpa tudo antes de começar
+    clearAll();
     document.getElementById('get-location-weather').classList.add('active');
-    
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -201,50 +138,37 @@ async function getGeolocationAndFetchWeather() {
         displayError(translations[localStorage.getItem('wbgt-lang') || 'pt'].locationNotAvailable);
     }
 }
-
 async function fetchWeatherDataByCoords(lat, lon) {
     const url = `${OPENWEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`;
     try {
         const response = await fetch(url);
         const data = await response.json();
         if (!response.ok) throw new Error(data.message);
-
         const lang = localStorage.getItem('wbgt-lang') || 'pt';
         document.getElementById('location-display').textContent = `${translations[lang].locationDisplayPrefix} ${data.name}, ${data.sys.country}`;
         document.getElementById("temperature").value = data.main.temp.toFixed(1);
         document.getElementById("humidity").value = data.main.humidity;
-        
-        // Simula o clique no botão para reusar a lógica de cálculo
         document.getElementById("calculate").dispatchEvent(new Event('click'));
-
     } catch (error) {
         displayError(translations[localStorage.getItem('wbgt-lang') || 'pt'].fetchError);
         document.getElementById('get-location-weather').classList.remove('active');
     }
 }
-
-
-// --- FUNÇÕES DE CÁLCULO (sem alterações) ---
-
 function calculateWBGT(temp, hum) {
     const lang = localStorage.getItem('wbgt-lang') || 'pt';
     if (Object.keys(wbgtData).length === 0) return { error: translations[lang].invalidInput };
     if (temp < 21 || temp > 40) return { error: translations[lang].tempOutOfRange };
     if (hum < 20 || hum > 100) return { error: translations[lang].humOutOfRange };
-
     const wbgtValue = Math.round(getWbgtValueInterpolated(temp, hum));
     if (isNaN(wbgtValue)) return { error: translations[lang].fetchError };
-    
     let levelIdx, color;
     if (wbgtValue >= 31) { levelIdx = 4; color = "#FF0000"; }
     else if (wbgtValue >= 28) { levelIdx = 3; color = "#FFC000"; }
     else if (wbgtValue >= 25) { levelIdx = 2; color = "#FFFF00"; }
     else if (wbgtValue >= 21) { levelIdx = 1; color = "#C5D9F1"; }
     else { levelIdx = 0; color = "#538DD5"; }
-
     return { wbgt: wbgtValue, levelIdx: levelIdx, color: color, label: translations[lang].levels[levelIdx] };
 }
-
 function getWbgtValueInterpolated(temp, hum) {
     const temps = Object.keys(wbgtData).map(Number).sort((a, b) => a - b);
     const hums = Object.keys(wbgtData[temps[0]]).map(Number).sort((a, b) => a - b);
@@ -266,7 +190,6 @@ function getWbgtValueInterpolated(temp, hum) {
     const interp_h1 = interpolate(temp, t0_val, wbgt_t0_h1, t1_val, wbgt_t1_h1);
     return interpolate(hum, h0_val, interp_h0, h1_val, interp_h1);
 }
-
 function interpolate(x, x0, y0, x1, y1) {
     if (x1 === x0) return y0;
     return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
