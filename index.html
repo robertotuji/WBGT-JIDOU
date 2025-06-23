@@ -73,19 +73,14 @@
             <p id="popup-text-brief"></p>
         </div>
     </div>
-
-
+    
     <script src="translations.js"></script>
     <script src="script.js"></script>
     
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/WBGT-JIDOU/service-worker.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
+                navigator.serviceWorker.register('/WBGT-JIDOU/service-worker.js');
             });
         }
     </script>
