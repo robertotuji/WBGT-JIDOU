@@ -113,8 +113,7 @@ const translations = {
 };
 
 // ** CHAVE DE API DA OPENWEATHERMAP AQUI **
-const OPENWEATHER_API_KEY = "ef9a9484e8ec68d89092a92a5281841e
-"; // Sua chave da OpenWeatherMap
+const OPENWEATHER_API_KEY = "ef9a9484e8ec68d8909"; // Sua chave da OpenWeatherMap
 const OPENWEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather"; // URL da OpenWeatherMap
 
 
@@ -171,7 +170,7 @@ async function getGeolocationAndFetchWeather() {
     hideError(); // Limpa erros e resultados anteriores
     resultBox.classList.add("hidden");
 
-    if (!OPENWEATHER_API_KEY) { // Validação da API Key para OpenWeatherMap
+    if (!OPENWEATHER_API_KEY) { // Usando a chave da OpenWeatherMap
         displayError(translations[document.getElementById("language").value].apiKeyNotConfigured); 
         console.error("API Key OpenWeatherMap não configurada ou inválida.");
         return;
@@ -333,4 +332,43 @@ function getWbgtValueInterpolated(temp, hum) {
     } else if (hum === hums[0]) {
         h0_val = hums[0];
         h1_val = hums[0];
-    } else if (h0_val === h1
+    } else if (h0_val === h1_val && hums.indexOf(h0_val) < hums.length - 1) {
+        h1_val = hums[hums.indexOf(h0_val) + 1];
+    }
+
+
+    const wbgt_t0_h0 = parseFloat(wbgtData[String(t0_val)]?.[String(h0_val)] || 0);
+    const wbgt_t0_h1 = parseFloat(wbgtData[String(t0_val)]?.[String(h1_val)] || 0);
+    const wbgt_t1_h0 = parseFloat(wbgtData[String(t1_val)]?.[String(h0_val)] || 0);
+    const wbgt_t1_h1 = parseFloat(wbgtData[String(t1_val)]?.[String(h1_val)] || 0);
+
+    let wbgt_interp;
+
+    if (t0_val === t1_val && h0_val === h1_val) {
+        wbgt_interp = wbgt_t0_h0;
+    } else if (t0_val === t1_val) {
+        wbgt_interp = interpolate(hum, h0_val, wbgt_t0_h0, h1_val, wbgt_t0_h1);
+    } else if (h0_val === h1_val) {
+        wbgt_interp = interpolate(temp, t0_val, wbgt_t0_h0, t1_val, wbgt_t1_h0);
+    } else {
+        const interpolated_at_h0 = interpolate(temp, t0_val, wbgt_t0_h0, t1_val, wbgt_t1_h0);
+        const interpolated_at_h1 = interpolate(temp, t0_val, wbgt_t0_h1, t1_val, wbgt_t1_h1);
+        wbgt_interp = interpolate(hum, h0_val, interpolated_at_h0, h1_val, interpolated_at_h1);
+    }
+    
+    console.log(`DEBUG: Temp=${temp}, Hum=${hum} -> Pontos: T0=${t0_val}, T1=${t1_val}, H0=${h0_val}, H1=${h1_val}`);
+    console.log(`DEBUG: WBGTs nos pontos: [${wbgt_t0_h0}, ${wbgt_t0_h1}, ${wbgt_t1_h0}, ${wbgt_t1_h1}]`);
+    console.log(`DEBUG: Interpolação resultado bruto: ${wbgt_interp}`);
+
+    return Math.round(wbgt_interp);
+}
+
+
+function calculateWBGT(temp, hum) {
+    if (Object.keys(wbgtData).length === 0) {
+        displayError(translations[document.getElementById("language").value].invalidInput);
+        return { wbgt: null, levelIdx: -1, color: "#CCCCCC" };
+    }
+
+    if (temp < 21 || temp > 40) {
+        displayError
