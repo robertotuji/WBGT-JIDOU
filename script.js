@@ -120,7 +120,7 @@ const errorMessage = document.getElementById("error-message");
 const container = document.querySelector('.container');
 const manualLabel = document.getElementById('manual-label');
 const locationDisplay = document.getElementById('location-display');
-const lastUpdatedDisplay = document.getElementById('last-updated-display'); // Elemento para a última atualização
+const lastUpdatedDisplay = document.getElementById('last-updated-display'); 
 const getLocationWeatherButton = document.getElementById('get-location-weather');
 
 const mainTitleElement = document.getElementById('main-title'); 
@@ -147,7 +147,6 @@ loadWbgtData();
 
 function displayError(message) {
     resultBox.classList.add("hidden");
-    // Protegendo contra 'null' antes de tentar usar textContent
     if (locationDisplay) locationDisplay.textContent = "";
     if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = "";
     getLocationWeatherButton.classList.remove('active');
@@ -158,7 +157,6 @@ function displayError(message) {
 function hideError() {
     errorMessageBox.classList.add("hidden");
     errorMessage.innerHTML = "";
-    // Protegendo contra 'null' antes de tentar usar textContent
     if (locationDisplay) locationDisplay.textContent = "";
     if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = "";
     getLocationWeatherButton.classList.remove('active');
@@ -168,7 +166,8 @@ async function getGeolocationAndFetchWeather() {
     hideError(); // Limpa erros e resultados anteriores
     resultBox.classList.add("hidden");
 
-    if (!WEATHERAPI_API_KEY) { // Usando a nova chave aqui
+    // Validação APENAS para a chave da WeatherAPI.com
+    if (!WEATHERAPI_API_KEY || WEATHERAPI_API_KEY === "b16f2d75e23e482a9775429252306" /* <-- Substitua por sua chave real */ ) {
         displayError("Por favor, configure sua chave de API da WeatherAPI.com no script.js.");
         console.error("API Key não configurada ou inválida.");
         return;
@@ -228,19 +227,19 @@ async function fetchWeatherDataByCoords(lat, lon) {
         console.log("API Response:", data);
 
         if (response.ok) {
-            if (data.current && data.current.temp_c !== undefined && data.current.humidity !== undefined && data.location && data.location.name && data.location.country) {
+            if (data.current && data.current.temp_c !== undefined && data.current.humidity !== undefined && data.location && data.location.name && data.location.country && data.current.last_updated_epoch !== undefined) {
                 const temp = data.current.temp_c;
                 const humidity = data.current.humidity;
                 const cityName = data.location.name;
-                const countryName = data.location.country;
-                const lastUpdated = data.current.last_updated_epoch;
+                const countryName = data.location.country; // WeatherAPI.com retorna nome do país, não código
+                const lastUpdated = data.current.last_updated_epoch; // Timestamp da API
+
+                const lang = document.getElementById("language").value;
+                if (locationDisplay) locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryName}`; // Exibe nome do país
                 
-                const date = new Date(lastUpdated * 1000);
+                const date = new Date(lastUpdated * 1000); // Multiplica por 1000 para ms
                 const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
                 const formattedTime = date.toLocaleTimeString(document.getElementById("language").value, options);
-                
-                const lang = document.getElementById("language").value;
-                if (locationDisplay) locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryName}`;
                 if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = `${translations[lang].lastUpdatedPrefix} ${formattedTime}`;
 
                 console.log(`DEBUG: Localizacao definida na UI: ${cityName}, ${countryName}`);
@@ -267,7 +266,7 @@ async function fetchWeatherDataByCoords(lat, lon) {
 
             } else {
                 displayError(translations[document.getElementById("language").value].fetchError);
-                console.error("Dados de temperatura/umidade/localização não encontrados na resposta da API:", data);
+                console.error("Dados de temperatura/umidade/localização/timestamp não encontrados na resposta da API:", data);
                 getLocationWeatherButton.classList.remove('active');
             }
         } else {
@@ -440,8 +439,8 @@ document.getElementById("get-location-weather").addEventListener("click", getGeo
 
 document.getElementById("calculate").addEventListener("click", () => {
     hideError();
-    locationDisplay.textContent = ""; // Limpa a localização exibida se o cálculo for manual
-    lastUpdatedDisplay.textContent = ""; // Limpa a atualização se o cálculo for manual
+    if (locationDisplay) locationDisplay.textContent = ""; // Limpa a localização exibida se o cálculo for manual
+    if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = ""; // Limpa a atualização se o cálculo for manual
     getLocationWeatherButton.classList.remove('active'); // Remove o 'active' do botão de localização ao calcular manualmente
 
 
@@ -478,8 +477,8 @@ document.getElementById("clear").addEventListener("click", () => {
     document.getElementById("humidity").value = "";
     resultBox.classList.add("hidden");
     hideError();
-    locationDisplay.textContent = "";
-    lastUpdatedDisplay.textContent = ""; // Limpa a última atualização
+    if (locationDisplay) locationDisplay.textContent = "";
+    if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = "";
     getLocationWeatherButton.classList.remove('active');
 });
 
