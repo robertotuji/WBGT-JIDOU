@@ -32,23 +32,30 @@ body {
     position: relative;
 }
 
-/* Estilos para o título principal */
-#title-main {
+/* Estilos para o título principal (WBGT) */
+#main-title {
     font-size: 2em; /* Tamanho da fonte para "WBGT" */
-    margin-bottom: 0.2em;
+    margin-bottom: 0; /* Remove margem inferior para aproximar o subtítulo */
     line-height: 1.2;
-    display: block; /* Garante que WBGT ocupe sua própria linha */
+    font-weight: bold;
+    color: #333; /* Cor padrão */
 }
 
-/* Estilos para a parte secundária do título (menor e abaixo) */
-#title-sub {
-    display: block; /* Garante que fique em uma nova linha */
-    font-size: 0.6em; /* Reduz o tamanho da fonte em relação a WBGT */
-    font-weight: normal;
-    color: #555; /* Uma cor um pouco mais suave para o subtítulo */
+/* Estilos para o subtítulo (Verificador/Checker etc.) */
+#sub-title {
+    font-size: 0.6em; /* Reduz o tamanho da fonte em relação ao H1 */
+    font-weight: normal; /* Mais leve */
+    color: #555; /* Cor mais suave */
+    margin-top: -0.5em; /* Aproxima do título principal */
+    margin-bottom: 1em; /* Margem inferior para separar do resto do conteúdo */
+    line-height: 1.2;
 }
 
-.dark-mode #title-sub {
+.dark-mode #main-title {
+    color: white;
+}
+
+.dark-mode #sub-title {
     color: #bbb; /* Cor mais clara para o subtítulo no modo escuro */
 }
 
