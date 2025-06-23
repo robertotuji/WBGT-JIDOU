@@ -8,7 +8,7 @@ html, body {
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
-    color: #333;
+    color: #333; /* Cor padrão do texto para o modo claro */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -34,8 +34,8 @@ body {
 
 /* Estilos para o título principal (WBGT) */
 #main-title {
-    font-size: 2em; /* Tamanho da fonte para "WBGT" */
-    margin-bottom: 0; /* Remove margem inferior para aproximar o subtítulo */
+    font-size: 2em;
+    margin-bottom: 0;
     line-height: 1.2;
     font-weight: bold;
     color: #333; /* Cor padrão */
@@ -43,20 +43,37 @@ body {
 
 /* Estilos para o subtítulo (Verificador/Checker etc.) */
 #sub-title {
-    font-size: 0.6em; /* Reduz o tamanho da fonte em relação ao H1 */
-    font-weight: normal; /* Mais leve */
+    display: block;
+    font-size: 0.6em;
+    font-weight: normal;
     color: #555; /* Cor mais suave */
-    margin-top: -0.5em; /* Aproxima do título principal */
-    margin-bottom: 1em; /* Margem inferior para separar do resto do conteúdo */
+    margin-top: -0.5em;
+    margin-bottom: 1em;
     line-height: 1.2;
 }
 
-.dark-mode #main-title {
-    color: white;
+/* Ajustes de cor de TEXTO para o MODO ESCURO */
+.dark-mode {
+    background-color: #1c1c1c;
+    color: white; /* Cor do texto padrão para o modo escuro (geralmente branco) */
 }
 
-.dark-mode #sub-title {
-    color: #bbb; /* Cor mais clara para o subtítulo no modo escuro */
+.dark-mode .container {
+    background-color: #333;
+    color: white; /* O texto dentro do container será branco por padrão no dark-mode */
+}
+
+/* Sobrescreve a cor do texto para os elementos específicos no modo escuro */
+.dark-mode #main-title,
+.dark-mode #sub-title,
+.dark-mode #location-display, /* Localização */
+.dark-mode #last-updated-display, /* Última atualização */
+.dark-mode #manual-label, /* Ou insira manualmente: */
+.dark-mode #label-temp, /* Temperatura label */
+.dark-mode #label-humidity, /* Umidade label */
+.dark-mode #dark-label /* Label do Modo Escuro */
+{
+    color: white !important; /* Força o texto a ser branco sobre o fundo escuro */
 }
 
 
@@ -122,27 +139,23 @@ button {
     display: none;
 }
 
+/* NOVO: Regras para forçar fundo branco e texto preto nos campos de INPUT e SELECT */
 input, select {
     width: 100%;
     padding: 8px;
     margin: 5px 0 15px 0;
     box-sizing: border-box;
+    background-color: white !important; /* Força fundo branco */
+    color: black !important; /* Força texto preto */
+    border: 1px solid #ccc; /* Adiciona uma borda padrão */
 }
 
-.dark-mode {
-    background-color: #1c1c1c;
-    color: white;
-}
-
-.dark-mode .container {
-    background-color: #333;
-    color: white;
-}
-
+/* Regra para texto branco em fundos azuis claros e vermelhos (Quase Seguro e Perigo) */
 .dark-bg-text-white {
     color: white !important;
 }
 
+/* Regra para forçar texto PRETO em fundos AMARELOS e LARANJAS (Alerta e Alerta Máximo) NO MODO ESCURO */
 .dark-mode #result-box[style*="background-color: rgb(255, 255, 0)"],
 .dark-mode #result-box[style*="background-color: rgb(255, 192, 0)"]
 {
