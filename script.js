@@ -78,8 +78,8 @@ const translations = {
         ]
     },
     id: {
-        titleMain: "Pemeriksa WBGT", // Parte principal do título
-        titleSub: "(Lokasi)", // Parte secundária
+        titleMain: "WBGT", // Parte principal do título
+        titleSub: "Pemeriksa (Lokasi)", // Parte secundária
         temperature: "Suhu (°C) Suhu Bola Kering:",
         humidity: "Kelembaban (%):",
         calculate: "Hitung",
@@ -117,8 +117,8 @@ const manualLabel = document.getElementById('manual-label');
 const locationDisplay = document.getElementById('location-display');
 const getLocationWeatherButton = document.getElementById('get-location-weather');
 
-const titleMainElement = document.getElementById('title-main'); // Elemento WBGT
-const titleSubElement = document.getElementById('title-sub'); // Elemento do subtítulo
+const titleMainElement = document.getElementById('title-main');
+const titleSubElement = document.getElementById('title-sub');
 
 
 let wbgtData = {};
@@ -173,7 +173,9 @@ async function getGeolocationAndFetchWeather() {
                 console.log("Geolocalização obtida:", position.coords.latitude, position.coords.longitude);
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
-                await fetchWeatherDataByCoords(lat, lon);
+                await fetchWeatherDataByCoords(lat, lon); // Chama a função para buscar dados da API
+                // A classe 'active' do botão permanecerá se a busca da API for bem-sucedida,
+                // e será removida ao limpar ou calcular manualmente.
             },
             (error) => {
                 const lang = document.getElementById("language").value;
@@ -391,8 +393,8 @@ function calculateWBGT(temp, hum) {
 function updateLanguage(lang) {
     const t = translations[lang];
     // Ajusta o texto do título em duas partes
-    document.getElementById("title-main").textContent = t.titleMain;
-    document.getElementById("title-sub").textContent = t.titleSub;
+    titleMainElement.textContent = t.titleMain; // Usa o elemento H1
+    titleSubElement.textContent = t.titleSub; // Usa o elemento SPAN
 
     document.getElementById("label-temp").textContent = t.temperature;
     document.getElementById("label-humidity").textContent = t.humidity;
