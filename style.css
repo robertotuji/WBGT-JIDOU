@@ -32,7 +32,7 @@ body {
     position: relative;
 }
 
-/* --- NOVOS ESTILOS PARA O TÍTULO --- */
+/* --- ESTILOS PARA O TÍTULO CORRIGIDO --- */
 .title-container {
     margin-bottom: 20px;
     line-height: 1;
@@ -52,7 +52,7 @@ body {
 .dark-mode #title-sub {
     color: #bbb;
 }
-/* --- FIM DOS NOVOS ESTILOS --- */
+/* --- FIM DOS ESTILOS DO TÍTULO --- */
 
 
 .button-group {
@@ -102,7 +102,7 @@ button {
     font-weight: bold;
 }
 
-/* --- NOVAS CLASSES PARA COR DO TEXTO (MELHORIA) --- */
+/* --- CLASSES PARA COR DO TEXTO --- */
 .text-light {
     color: white;
 }
@@ -110,7 +110,7 @@ button {
 .text-dark {
     color: black;
 }
-/* --- FIM DAS NOVAS CLASSES --- */
+/* --- FIM DAS CLASSES --- */
 
 
 .error-box {
