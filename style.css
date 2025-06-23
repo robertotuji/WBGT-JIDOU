@@ -32,6 +32,28 @@ body {
     position: relative;
 }
 
+/* --- NOVOS ESTILOS PARA O TÍTULO --- */
+.title-container {
+    margin-bottom: 20px;
+    line-height: 1;
+}
+
+#title-main {
+    margin: 0;
+    font-size: 2.8em;
+    font-weight: bold;
+}
+
+#title-sub {
+    font-size: 1.2em;
+    color: #555;
+}
+
+.dark-mode #title-sub {
+    color: #bbb;
+}
+/* --- FIM DOS NOVOS ESTILOS --- */
+
 
 .button-group {
     display: flex;
@@ -52,17 +74,16 @@ button {
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    color: white; /* Cor da fonte padrão para botões de fundo colorido */
-    transition: background-color 0.3s ease; /* Transição suave para mudança de cor */
+    color: white;
+    transition: background-color 0.3s ease;
 }
 
 #get-location-weather {
-    background-color: #00aaff; /* Azul original */
-    color: white; /* Texto branco */
+    background-color: #00aaff;
 }
 
-#get-location-weather.active { /* Estilo para o botão de localização quando está ATIVO */
-    background-color: #28a745; /* Um verde, para indicar sucesso/ativo */
+#get-location-weather.active {
+    background-color: #28a745;
 }
 
 
@@ -80,6 +101,17 @@ button {
     border-radius: 8px;
     font-weight: bold;
 }
+
+/* --- NOVAS CLASSES PARA COR DO TEXTO (MELHORIA) --- */
+.text-light {
+    color: white;
+}
+
+.text-dark {
+    color: black;
+}
+/* --- FIM DAS NOVAS CLASSES --- */
+
 
 .error-box {
     margin-top: 15px;
@@ -111,17 +143,6 @@ input, select {
     background-color: #333;
     color: white;
 }
-
-.dark-bg-text-white {
-    color: white !important;
-}
-
-.dark-mode #result-box[style*="background-color: rgb(255, 255, 0)"], /* Amarelo */
-.dark-mode #result-box[style*="background-color: rgb(255, 192, 0)"] /* Laranja */
-{
-    color: black !important;
-}
-
 
 .switch-container {
     display: flex;
