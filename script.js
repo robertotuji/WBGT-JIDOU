@@ -15,6 +15,7 @@ const translations = {
         locationNotAvailable: "位置情報が利用できません。",
         locationTimeout: "位置情報の取得がタイムアウトしました。もう一度お試しください。",
         fetchError: "気象データの取得中にエラーが発生しました。",
+        apiKeyNotConfigured: "APIキーが設定されていません。script.jsを確認してください。",
         manualLabel: "または手動で入力:",
         locationDisplayPrefix: "場所:",
         lastUpdatedPrefix: "最終更新:",
@@ -42,6 +43,7 @@ const translations = {
         locationNotAvailable: "Localização não disponível.",
         locationTimeout: "Tempo esgotado para obter a localização. Por favor, tente novamente.",
         fetchError: "Erro ao buscar dados do clima. Por favor, tente novamente mais tarde.",
+        apiKeyNotConfigured: "Por favor, configure sua chave de API da WeatherAPI.com no script.js.",
         manualLabel: "Ou insira manualmente:",
         locationDisplayPrefix: "Local:",
         lastUpdatedPrefix: "Última atualização:",
@@ -69,6 +71,7 @@ const translations = {
         locationNotAvailable: "Location information not available.",
         locationTimeout: "The request to get user location timed out. Please try again.",
         fetchError: "Error fetching weather data. Please try again later.",
+        apiKeyNotConfigured: "Please configure your WeatherAPI.com API key in script.js.",
         manualLabel: "Or enter manually:",
         locationDisplayPrefix: "Location:",
         lastUpdatedPrefix: "Last updated:",
@@ -96,6 +99,7 @@ const translations = {
         locationNotAvailable: "Informasi lokasi tidak tersedia.",
         locationTimeout: "Permintaan untuk mendapatkan lokasi pengguna telah habis waktu. Silakan coba lagi.",
         fetchError: "Terjadi kesalahan saat mengambil data cuaca.",
+        apiKeyNotConfigured: "Mohon konfigurasikan kunci API WeatherAPI.com Anda di script.js.",
         manualLabel: "Atau masukkan secara manual:",
         lastUpdatedPrefix: "Terakhir diperbarui:",
         levels: [
@@ -110,7 +114,7 @@ const translations = {
 
 // ** CHAVE DE API DA WEATHERAPI.COM AQUI **
 const WEATHERAPI_API_KEY = "b16f2d75e23e482a9775429252306"; // Sua chave da WeatherAPI.com
-const WEATHERAPI_API_URL = "https://api.weatherapi.com/v1/current.json";
+const WEATHERAPI_API_URL = "https://api.weatherapi.com/v1/current.json"; // URL da WeatherAPI.com
 
 
 const resultBox = document.getElementById("result-box");
@@ -166,15 +170,15 @@ async function getGeolocationAndFetchWeather() {
     hideError(); // Limpa erros e resultados anteriores
     resultBox.classList.add("hidden");
 
-    // Validação APENAS para a chave da WeatherAPI.com
-    if (!WEATHERAPI_API_KEY || WEATHERAPI_API_KEY === "b16f2d75e23e482a9775429252306" /* <-- Substitua por sua chave real */ ) {
-        displayError("Por favor, configure sua chave de API da WeatherAPI.com no script.js.");
-        console.error("API Key não configurada ou inválida.");
+    // Validação da API Key para WeatherAPI.com
+    if (!WEATHERAPI_API_KEY || WEATHERAPI_API_KEY === "b16f2d75e23e482a9775429252306") { // A API Key deve ser sua chave real
+        displayError(translations[document.getElementById("language").value].apiKeyNotConfigured); 
+        console.error("API Key WeatherAPI.com não configurada ou inválida.");
         return;
     }
 
     console.log("Clicado no botão 'Obter Clima da Localização Atual'. Tentando obter geolocalização...");
-    getLocationWeatherButton.classList.add('active'); // Define o botão como ativo no início da tentativa
+    getLocationWeatherButton.classList.add('active'); 
     
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -201,7 +205,7 @@ async function getGeolocationAndFetchWeather() {
                         break;
                 }
                 console.error("Erro de geolocalização:", error);
-                getLocationWeatherButton.classList.remove('active'); // Remove a classe 'active' em caso de erro
+                getLocationWeatherButton.classList.remove('active');
             },
             {
                 enableHighAccuracy: true,
@@ -217,6 +221,7 @@ async function getGeolocationAndFetchWeather() {
 }
 
 async function fetchWeatherDataByCoords(lat, lon) {
+    // ** Chamada à API da WeatherAPI.com **
     const url = `${WEATHERAPI_API_URL}?key=${WEATHERAPI_API_KEY}&q=${lat},${lon}&aqi=no`;
 
     console.log("Fetching weather from URL:", url);
@@ -227,23 +232,21 @@ async function fetchWeatherDataByCoords(lat, lon) {
         console.log("API Response:", data);
 
         if (response.ok) {
+            // ** Extração de dados da WeatherAPI.com **
             if (data.current && data.current.temp_c !== undefined && data.current.humidity !== undefined && data.location && data.location.name && data.location.country && data.current.last_updated_epoch !== undefined) {
-                const temp = data.current.temp_c;
-                const humidity = data.current.humidity;
+                const temp = data.current.temp_c; // Temperatura em Celsius
+                const humidity = data.current.humidity; // Umidade
                 const cityName = data.location.name;
                 const countryName = data.location.country; // WeatherAPI.com retorna nome do país, não código
                 const lastUpdated = data.current.last_updated_epoch; // Timestamp da API
 
                 const lang = document.getElementById("language").value;
-                if (locationDisplay) locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryName}`; // Exibe nome do país
+                if (locationDisplay) locationDisplay.textContent = `${translations[lang].locationDisplayPrefix} ${cityName}, ${countryName}`;
                 
                 const date = new Date(lastUpdated * 1000); // Multiplica por 1000 para ms
                 const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
                 const formattedTime = date.toLocaleTimeString(document.getElementById("language").value, options);
                 if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = `${translations[lang].lastUpdatedPrefix} ${formattedTime}`;
-
-                console.log(`DEBUG: Localizacao definida na UI: ${cityName}, ${countryName}`);
-                console.log(`DEBUG: Última atualização definida na UI: ${formattedTime}`);
 
                 document.getElementById("temperature").value = temp.toFixed(1);
                 document.getElementById("humidity").value = humidity;
@@ -271,7 +274,7 @@ async function fetchWeatherDataByCoords(lat, lon) {
             }
         } else {
             let errorMessageText = translations[document.getElementById("language").value].fetchError;
-            if (data.error && data.error.message) {
+            if (data.error && data.error.message) { // WeatherAPI.com usa 'error.message' para erros
                 errorMessageText += ` (${data.error.message})`;
             }
             displayError(errorMessageText);
