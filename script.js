@@ -117,8 +117,9 @@ const manualLabel = document.getElementById('manual-label');
 const locationDisplay = document.getElementById('location-display');
 const getLocationWeatherButton = document.getElementById('get-location-weather');
 
-const titleMainElement = document.getElementById('title-main');
-const titleSubElement = document.getElementById('title-sub');
+// Elementos do título agora são pegos aqui
+const mainTitleElement = document.getElementById('main-title'); 
+const subTitleElement = document.getElementById('sub-title');
 
 
 let wbgtData = {};
@@ -390,8 +391,8 @@ function calculateWBGT(temp, hum) {
 function updateLanguage(lang) {
     const t = translations[lang];
     // Ajusta o texto do título em duas partes
-    titleMainElement.textContent = t.titleMain;
-    titleSubElement.textContent = t.titleSub;
+    mainTitleElement.textContent = t.titleMain; // Define o texto do H1
+    subTitleElement.textContent = t.titleSub; // Define o texto do H2
 
     document.getElementById("label-temp").textContent = t.temperature;
     document.getElementById("label-humidity").textContent = t.humidity;
